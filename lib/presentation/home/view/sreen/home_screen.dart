@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ogrova_team/presentation/home/view/widget/app_bar_widget.dart';
+import 'package:ogrova_team/presentation/home/view/widget/categorie_item.dart';
 import 'package:ogrova_team/presentation/home/view/widget/home_banner.dart';
 import 'package:ogrova_team/presentation/home/view/widget/product_grid_view.dart';
 import 'package:ogrova_team/presentation/home/view/widget/search_bar.dart';
@@ -12,7 +13,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF8F9FA),
-
+      drawer: Drawer(),
       appBar: OgrovaAppBar(),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -20,6 +21,20 @@ class HomeScreen extends StatelessWidget {
           children: [
             OgrovaSearchBar(),
             HomeBanner(),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  CategoryItem(title: "All", icon: Icons.all_inbox),
+                  CategoryItem(title: "Shoe", icon: Icons.label),
+                  CategoryItem(title: "home", icon: Icons.ice_skating_outlined),
+                  CategoryItem(title: "home", icon: Icons.ice_skating_outlined),
+                  CategoryItem(title: "home", icon: Icons.ice_skating_outlined),
+                  CategoryItem(title: "home", icon: Icons.ice_skating_outlined),
+                  CategoryItem(title: "home", icon: Icons.ice_skating_outlined),
+                ],
+              ),
+            ),
             const SectionHeader(title: "FEATURED PRODUCTS"),
             const ProductGridView(),
 
