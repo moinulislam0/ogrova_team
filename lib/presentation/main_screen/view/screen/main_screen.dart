@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ogrova_team/presentation/add_to-cart/view/screen/add_to_cart_screen.dart';
 
 import 'package:ogrova_team/presentation/home/view/sreen/home_screen.dart'; // আপনার হোম স্ক্রিন পাথ
 
@@ -14,8 +15,8 @@ class _MainScreenState extends State<MainScreen> {
 
 
   final List<Widget> _pages = [
-    const HomeScreen(), 
-    const Center(child: Text("Cart Page", style: TextStyle(fontSize: 24))), // কার্ট ট্যাব
+    HomeScreen(), 
+   ShoppingCartScreen(),
     const Center(child: Text("Profile Page", style: TextStyle(fontSize: 24))), // প্রোফাইল ট্যাব
   ];
 
