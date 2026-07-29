@@ -6,7 +6,7 @@ class ColorManager {
   ColorManager._();
 
   // ===== Primary Colors =====
-  static const Color primary = Color(0xFF00136B);
+  static const Color primary = Color(0xFF00A86B);
   static const Color primaryLight = Color(0xFF334289);
   static const Color primaryDark = Color(0xFF000C48);
 
@@ -50,7 +50,5 @@ class ColorManager {
   static const Color infoColor = Color(0xFF1976D2);
 
   // ===== Utility Colors =====
-  static const Color shadowColor = Color(0x1A000000); // 10% opacity black
-  static const Color dividerColor = Color(0xFFE0E0E0);
-  static const Color overlayColor = Color(0x33000000); // 20% opacity black
+ 
 }
