@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:ogrova_team/core/resource/constant/color_manager.dart';
+
 const Color kPrimary = Color(0xFF00A86B);
 const Color kPrimaryDark = Color(0xFF008C5A);
 const Color kBg = Color(0xFFF1F5F9);
 const Color kTextDark = Color(0xFF0F172A);
 const Color kTextMuted = Color(0xFF64748B);
+
 class ThemeScreen extends StatefulWidget {
   const ThemeScreen({super.key});
 
@@ -23,21 +26,42 @@ class _ThemeScreenState extends State<ThemeScreen> {
           "Theme",
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: ColorManager.primary,
         elevation: 0,
         foregroundColor: kTextDark,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          _themeOption(
-            "System",
-            Icons.phone_android_rounded,
-            "Follow device setting",
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              ColorManager.primary,
+              Color(0xFFF0FDF6),
+              Color(0xFFF8FAFC),
+              Color(0xFFF1F5F9),
+            ],
+            stops: [0.0, 0.3, 0.7, 1.0],
           ),
-          _themeOption("Light", Icons.light_mode_outlined, "Always light mode"),
-          _themeOption("Dark", Icons.dark_mode_outlined, "Always dark mode"),
-        ],
+        ),
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            _themeOption(
+              "System",
+              Icons.phone_android_rounded,
+              "Follow device setting",
+            ),
+            _themeOption(
+              "Light",
+              Icons.light_mode_outlined,
+              "Always light mode",
+            ),
+            _themeOption("Dark", Icons.dark_mode_outlined, "Always dark mode"),
+          ],
+        ),
       ),
     );
   }

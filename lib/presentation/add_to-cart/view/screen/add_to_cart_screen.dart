@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 import 'package:ogrova_team/core/resource/constant/image_manager.dart';
 import 'package:ogrova_team/presentation/add_to-cart/view/widget/cart_item_card_widget.dart';
 import 'package:ogrova_team/presentation/add_to-cart/view/widget/order_summary_card_widget.dart';
-import 'package:ogrova_team/presentation/billing_address/view/screen/billing_address.dart';
 
 class ShoppingCartScreen extends StatefulWidget {
   const ShoppingCartScreen({super.key});
@@ -44,99 +44,110 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9),
+      backgroundColor: ColorManager.primary,
       appBar: AppBar(
         scrolledUnderElevation: 0,
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: const BackButton(color: Colors.black),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Home  /  Shopping Cart",
-              style: TextStyle(color: Colors.grey, fontSize: 13),
-            ),
-            const SizedBox(height: 10),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              ColorManager.primary,
+              Color(0xFFF0FDF6),
+              Color(0xFFF8FAFC),
+              Color(0xFFF1F5F9),
+            ],
+            stops: [0.0, 0.3, 0.7, 1.0],
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 10),
 
-            Row(
-              children: [
-                const Text(
-                  "Shopping Cart",
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -1,
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Container(
-                  height: 8,
-                  width: 8,
-                  decoration: const BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 15),
-
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: RichText(
-                text: TextSpan(
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  children: [
-                    const TextSpan(text: "Total Items: "),
-                    TextSpan(
-                      text: "${cartItems.length}",
-                      style: const TextStyle(color: Colors.green),
+              Row(
+                children: [
+                  const Text(
+                    "Shopping Cart",
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -1,
                     ),
-                  ],
+                  ),
+                  const SizedBox(width: 5),
+                  Container(
+                    height: 8,
+                    width: 8,
+                    decoration: const BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 15),
+
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
+                child: RichText(
+                  text: TextSpan(
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    children: [
+                      const TextSpan(text: "Total Items: "),
+                      TextSpan(
+                        text: "${cartItems.length}",
+                        style: const TextStyle(color: Colors.green),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: cartItems.length,
-              itemBuilder: (context, index) {
-                final item = cartItems[index];
-                return CartItemCard(
-                  item: item,
-                  onIncrement: () => setState(() => item['quantity']++),
-                  onDecrement: () => setState(() {
-                    if (item['quantity'] > 1) item['quantity']--;
-                  }),
-                  onDelete: () => setState(() => cartItems.removeAt(index)),
-                );
-              },
-            ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: cartItems.length,
+                itemBuilder: (context, index) {
+                  final item = cartItems[index];
+                  return CartItemCard(
+                    item: item,
+                    onIncrement: () => setState(() => item['quantity']++),
+                    onDecrement: () => setState(() {
+                      if (item['quantity'] > 1) item['quantity']--;
+                    }),
+                    onDelete: () => setState(() => cartItems.removeAt(index)),
+                  );
+                },
+              ),
 
-            const SizedBox(height: 20),
-       
-            OrderSummaryCard(subtotal: subtotal, points: totalPoints),
-            const SizedBox(height: 40),
-          ],
+              const SizedBox(height: 20),
+
+              OrderSummaryCard(subtotal: subtotal, points: totalPoints),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-
-

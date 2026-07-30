@@ -30,7 +30,7 @@ class StockAndSkuWidget extends StatelessWidget {
         const SizedBox(width: 15),
         const Text(
           "SKU: PRD-SKU-48SLA5",
-          style: TextStyle(color: Colors.blueGrey, fontSize: 12),
+          style: TextStyle(color: Colors.black, fontSize: 14),
         ),
       ],
     );

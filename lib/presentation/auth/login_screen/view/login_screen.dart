@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 import 'package:ogrova_team/core/resource/constant/image_manager.dart';
+import 'package:ogrova_team/presentation/auth/forgot_screen/view/screen/forgot_screen.dart';
 import 'package:ogrova_team/presentation/register_screen/view/screen/register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -142,7 +143,12 @@ class LoginScreen extends StatelessWidget {
                   ],
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ForgotScreen()),
+                    );
+                  },
                   child: const Text(
                     "Forgot Password?",
                     style: TextStyle(

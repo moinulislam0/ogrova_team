@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ogrova_team/core/resource/constant/color_manager.dart';
+import 'package:ogrova_team/presentation/auth/login_screen/view/login_screen.dart';
 import 'package:ogrova_team/presentation/home/view/widget/section_header.dart';
-import 'package:ogrova_team/presentation/login_screen/view/screen/login_screen.dart';
 import 'package:ogrova_team/presentation/profile_screen/view/widget/about_screen.dart';
 import 'package:ogrova_team/presentation/profile_screen/view/widget/header_widget.dart';
 import 'package:ogrova_team/presentation/profile_screen/view/widget/menu_tile_widget.dart';
@@ -250,7 +250,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       iconBg: CupertinoColors.destructiveRed,
                       iconColor: const Color(0xFF475569),
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (_) => const LoginScreen(),

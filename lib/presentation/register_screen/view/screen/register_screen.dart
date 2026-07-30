@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ogrova_team/core/resource/constant/color_manager.dart';
+import 'package:ogrova_team/presentation/auth/login_screen/view/login_screen.dart';
 import 'package:ogrova_team/presentation/register_screen/view/widget/image_option_tile.dart';
 import 'package:ogrova_team/presentation/register_screen/view/widget/registration_section_card.dart';
 import 'package:ogrova_team/presentation/register_screen/view/widget/resigtration_text_field.dart';
@@ -172,36 +173,6 @@ class _RegisterScreenState extends State<RegisterScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: ColorManager.primary,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: 20,
-            color: Colors.black87,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Go Back",
-              style: TextStyle(fontSize: 14, color: Colors.white),
-            ),
-            Text(
-              "Create New Profile",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -223,7 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen>
           child: SlideTransition(
             position: _slideAnimation,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 36),
+              padding: const EdgeInsets.fromLTRB(16, 80, 16, 36),
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
@@ -386,7 +357,14 @@ class _RegisterScreenState extends State<RegisterScreen>
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF00A86B),
                         foregroundColor: Colors.white,

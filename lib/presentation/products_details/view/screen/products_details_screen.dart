@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 import 'package:ogrova_team/presentation/add_to-cart/view/screen/add_to_cart_screen.dart';
 import 'package:ogrova_team/presentation/products_details/view/widget/action_button_widget.dart';
 import 'package:ogrova_team/presentation/products_details/view/widget/brand_badge_widget.dart';
-import 'package:ogrova_team/presentation/products_details/view/widget/brand_crum_widget.dart';
 import 'package:ogrova_team/presentation/products_details/view/widget/delivery_info_widget.dart';
 import 'package:ogrova_team/presentation/products_details/view/widget/price_box_widget.dart';
 import 'package:ogrova_team/presentation/products_details/view/widget/product_image_widget.dart';
@@ -71,7 +71,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: ColorManager.primary,
         surfaceTintColor: Colors.transparent,
         elevation: 0.5,
         leading: IconButton(
@@ -89,71 +89,88 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const BreadcrumbWidget(),
-            const SizedBox(height: 15),
-            const StockAndSkuWidget(),
-            const SizedBox(height: 20),
-            // ProductImageSection(image: ImageManager.logo), // ImageManager ইউজ করুন
-            const ProductImageSection(),
-            const SizedBox(height: 20),
-            const BrandAndBadges(),
-            const SizedBox(height: 10),
-            const Text(
-              "Sample Product 265",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.5,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              ColorManager.primary,
+              Color(0xFFF0FDF6),
+              Color(0xFFF8FAFC),
+              Color(0xFFF1F5F9),
+            ],
+            stops: [0.0, 0.3, 0.7, 1.0],
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // const BreadcrumbWidget(),
+              const SizedBox(height: 15),
+              const StockAndSkuWidget(),
+              const SizedBox(height: 20),
+              // ProductImageSection(image: ImageManager.logo), // ImageManager ইউজ করুন
+              const ProductImageSection(),
+              const SizedBox(height: 20),
+              const BrandAndBadges(),
+              const SizedBox(height: 10),
+              const Text(
+                "Sample Product 265",
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.5,
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              "This is a summary of Sample Product 265",
-              style: TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 20),
-
-            PriceBoxWidget(currentPrice: totalPrice, oldPrice: totalOldPrice),
-
-            const SizedBox(height: 25),
-            const Text(
-              "CONFIGURE VARIANT",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.blueGrey,
+              const SizedBox(height: 10),
+              const Text(
+                "This is a summary of Sample Product 265",
+                style: TextStyle(color: Colors.grey),
               ),
-            ),
-            const SizedBox(height: 12),
+              const SizedBox(height: 20),
 
-            Column(
-              children: List.generate(variants.length, (index) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedVariantIndex = index;
-                    });
-                  },
-                  child: VariantCard(
-                    title: variants[index]['title'],
-                    price: "৳${variants[index]['price']}",
-                    left: variants[index]['left'],
-                    color: variants[index]['color'],
-                    isSelected: selectedVariantIndex == index,
-                  ),
-                );
-              }),
-            ),
+              PriceBoxWidget(currentPrice: totalPrice, oldPrice: totalOldPrice),
 
-            const SizedBox(height: 20),
-            const DeliveryInfoWidget(),
+              const SizedBox(height: 25),
+              const Text(
+                "CONFIGURE VARIANT",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueGrey,
+                ),
+              ),
+              const SizedBox(height: 12),
 
-            const SizedBox(height: 20),
-          ],
+              Column(
+                children: List.generate(variants.length, (index) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedVariantIndex = index;
+                      });
+                    },
+                    child: VariantCard(
+                      title: variants[index]['title'],
+                      price: "৳${variants[index]['price']}",
+                      left: variants[index]['left'],
+                      color: variants[index]['color'],
+                      isSelected: selectedVariantIndex == index,
+                    ),
+                  );
+                }),
+              ),
+
+              const SizedBox(height: 20),
+              const DeliveryInfoWidget(),
+
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: Container(
@@ -228,7 +245,3 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 }
-
-
-
-

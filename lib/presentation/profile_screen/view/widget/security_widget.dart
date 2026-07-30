@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:ogrova_team/core/resource/constant/color_manager.dart';
+
 const Color kPrimary = Color(0xFF00A86B);
 const Color kPrimaryDark = Color(0xFF008C5A);
 const Color kBg = Color(0xFFF1F5F9);
 const Color kTextDark = Color(0xFF0F172A);
 const Color kTextMuted = Color(0xFF64748B);
+
 class SecurityScreen extends StatelessWidget {
   const SecurityScreen({super.key});
 
@@ -16,38 +19,55 @@ class SecurityScreen extends StatelessWidget {
           "Security",
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: ColorManager.primary,
         elevation: 0,
         foregroundColor: kTextDark,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          _secTile(
-            Icons.lock_outline_rounded,
-            "Change Password",
-            "Update your account password",
-            () {},
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              ColorManager.primary,
+              Color(0xFFF0FDF6),
+              Color(0xFFF8FAFC),
+              Color(0xFFF1F5F9),
+            ],
+            stops: [0.0, 0.3, 0.7, 1.0],
           ),
-          _secTile(
-            Icons.phonelink_lock_rounded,
-            "Two-Factor Authentication",
-            "Add extra security layer",
-            () {},
-          ),
-          _secTile(
-            Icons.devices_rounded,
-            "Active Sessions",
-            "Manage logged-in devices",
-            () {},
-          ),
-          _secTile(
-            Icons.security_rounded,
-            "Login Alerts",
-            "Get notified of new logins",
-            () {},
-          ),
-        ],
+        ),
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            _secTile(
+              Icons.lock_outline_rounded,
+              "Change Password",
+              "Update your account password",
+              () {},
+            ),
+            _secTile(
+              Icons.phonelink_lock_rounded,
+              "Two-Factor Authentication",
+              "Add extra security layer",
+              () {},
+            ),
+            _secTile(
+              Icons.devices_rounded,
+              "Active Sessions",
+              "Manage logged-in devices",
+              () {},
+            ),
+            _secTile(
+              Icons.security_rounded,
+              "Login Alerts",
+              "Get notified of new logins",
+              () {},
+            ),
+          ],
+        ),
       ),
     );
   }
