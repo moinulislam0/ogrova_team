@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 
 class MenuTile extends StatelessWidget {
-  final IconData icon;
-  final String title, subtitle;
-  final VoidCallback onTap;
-  final Color iconBg;
-  final Color iconColor;
+  final IconData? icon;
+  final IconData? arrowIcon;
+  final String? title;
+  final String? subtitle;
+  final VoidCallback? onTap;
+  final Color? iconBg;
+  final Color? iconColor;
 
   const MenuTile({
     super.key,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
+    this.icon,
+    this.arrowIcon,
+    this.title,
+    this.subtitle,
+    this.onTap,
     this.iconBg = const Color(0xFFF1F5F9),
     this.iconColor = const Color(0xFF475569),
   });
@@ -42,7 +45,7 @@ class MenuTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
+                      title ?? "",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -51,7 +54,7 @@ class MenuTile extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      subtitle,
+                      subtitle ?? "",
                       style: const TextStyle(
                         fontSize: 11,
                         color: Color(0xFF94A3B8),
@@ -60,8 +63,8 @@ class MenuTile extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(
-                Icons.arrow_forward_ios_rounded,
+               Icon(
+               arrowIcon ,
                 size: 14,
                 color: Color(0xFFCBD5E1),
               ),

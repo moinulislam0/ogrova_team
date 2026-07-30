@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ogrova_team/presentation/profile_screen/view/widget/order_widet.dart';
+
 const Color kPrimary = Color(0xFF00A86B);
 const Color kPrimaryDark = Color(0xFF008C5A);
 const Color kBg = Color(0xFFF1F5F9);
 const Color kTextDark = Color(0xFF0F172A);
 const Color kTextMuted = Color(0xFF64748B);
+
 class OrderHistoryScreen extends StatelessWidget {
   const OrderHistoryScreen({super.key});
 
@@ -209,42 +211,42 @@ class OrderHistoryScreen extends StatelessWidget {
             ),
 
             // Pagination
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Showing 1 – 2 of 2",
-                    style: TextStyle(fontSize: 12, color: kTextMuted),
-                  ),
-                  Row(
-                    children: [
-                      _pageBtn(Icons.first_page_rounded, false),
-                      _pageBtn(Icons.chevron_left_rounded, false),
-                      Container(
-                        width: 32,
-                        height: 32,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: kTextDark,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text(
-                          "1",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      _pageBtn(Icons.chevron_right_rounded, false),
-                      _pageBtn(Icons.last_page_rounded, false),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: [
+            //       const Text(
+            //         "Showing 1 – 2 of 2",
+            //         style: TextStyle(fontSize: 12, color: kTextMuted),
+            //       ),
+            //       Row(
+            //         children: [
+            //           // _pageBtn(Icons.first_page_rounded, false),
+            //           // _pageBtn(Icons.chevron_left_rounded, false),
+            //           Container(
+            //             width: 32,
+            //             height: 32,
+            //             alignment: Alignment.center,
+            //             decoration: BoxDecoration(
+            //               color: kTextDark,
+            //               borderRadius: BorderRadius.circular(8),
+            //             ),
+            //             child: const Text(
+            //               "1",
+            //               style: TextStyle(
+            //                 color: Colors.white,
+            //                 fontWeight: FontWeight.bold,
+            //               ),
+            //             ),
+            //           ),
+            //           // _pageBtn(Icons.chevron_right_rounded, false),
+            //           // _pageBtn(Icons.last_page_rounded, false),
+            //         ],
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -269,16 +271,16 @@ class OrderHistoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _pageBtn(IconData icon, bool enabled) {
-    return IconButton(
-      onPressed: enabled ? () {} : null,
-      icon: Icon(
-        icon,
-        size: 20,
-        color: enabled ? kTextDark : Colors.grey.shade300,
-      ),
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-    );
-  }
+  // Widget _pageBtn(IconData icon, bool enabled) {
+  //   return IconButton(
+  //     onPressed: enabled ? () {} : null,
+  //     icon: Icon(
+  //       icon,
+  //       size: 20,
+  //       color: enabled ? kTextDark : Colors.grey.shade300,
+  //     ),
+  //     padding: EdgeInsets.zero,
+  //     constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+  //   );
+  // }
 }

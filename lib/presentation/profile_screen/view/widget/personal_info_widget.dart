@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+
 const Color kPrimary = Color(0xFF00A86B);
 const Color kPrimaryDark = Color(0xFF008C5A);
 const Color kBg = Color(0xFFF1F5F9);
 const Color kTextDark = Color(0xFF0F172A);
 const Color kTextMuted = Color(0xFF64748B);
+
 class PremiumPersonalInfoForm extends StatelessWidget {
+  
   const PremiumPersonalInfoForm({super.key});
 
   @override
@@ -24,16 +27,35 @@ class PremiumPersonalInfoForm extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildField("Full Name", "Admin One", Icons.person_outline_rounded),
-          const SizedBox(height: 16),
-          _buildField("Phone Number", "01711111112", Icons.phone_outlined),
-          const SizedBox(height: 16),
+         
           _buildField(
-            "Email Address",
-            "admin1@gmail.com",
-            Icons.email_outlined,
+            label: "Full Name",
+            hintText: "Enter your full name",
+            value: "Admin One",
+            icon: Icons.person_outline_rounded,
           ),
           const SizedBox(height: 16),
+
+          // Phone Number
+          _buildField(
+            label: "Phone Number",
+            hintText: "e.g. 017XXXXXXXX",
+            value: "01711111112",
+            icon: Icons.phone_outlined,
+          ),
+          const SizedBox(height: 16),
+
+          // Email Address
+          _buildField(
+            label: "Email Address",
+            hintText: "Enter your email address",
+            value:
+                "admin1@gmail.com", 
+            icon: Icons.email_outlined,
+          ),
+          const SizedBox(height: 16),
+
+          // Gender & Blood Group Row
           Row(
             children: [
               Expanded(
@@ -51,15 +73,22 @@ class PremiumPersonalInfoForm extends StatelessWidget {
                   "B+",
                   "O+",
                   "AB+",
+                  "A-",
+                  "B-",
+                  "O-",
+                  "AB-",
                 ]),
               ),
             ],
           ),
           const SizedBox(height: 16),
+
+          // Present Address
           _buildField(
-            "Present Address",
-            "Level 5, Business Center, Banani",
-            Icons.location_on_outlined,
+            label: "Present Address",
+            hintText: "House, Road, Area details...",
+            value: "Level 5, Business Center, Banani",
+            icon: Icons.location_on_outlined,
             maxLines: 2,
           ),
         ],
@@ -67,10 +96,12 @@ class PremiumPersonalInfoForm extends StatelessWidget {
     );
   }
 
-  Widget _buildField(
-    String label,
-    String value,
-    IconData icon, {
+  
+  Widget _buildField({
+    required String label,
+    required String hintText,
+    required String value,
+    required IconData icon,
     int maxLines = 1,
   }) {
     return Column(
@@ -94,6 +125,11 @@ class PremiumPersonalInfoForm extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
           decoration: InputDecoration(
+            hintText: hintText, 
+            hintStyle: const TextStyle(
+              color: Color(0xFF94A3B8),
+              fontWeight: FontWeight.normal,
+            ),
             prefixIcon: Icon(icon, color: const Color(0xFF94A3B8), size: 20),
             filled: true,
             fillColor: const Color(0xFFF8FAFC),
@@ -135,13 +171,17 @@ class PremiumPersonalInfoForm extends StatelessWidget {
         DropdownButtonFormField<String>(
           value: items.first,
           items: items
-              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+              .map(
+                (e) => DropdownMenuItem(
+                  value: e,
+                  child: Text(e, style: const TextStyle(fontSize: 14)),
+                ),
+              )
               .toList(),
           onChanged: (val) {},
-          style: const TextStyle(
-            fontSize: 14,
-            color: kTextDark,
-            fontWeight: FontWeight.w500,
+          icon: const Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: Color(0xFF94A3B8),
           ),
           decoration: InputDecoration(
             filled: true,

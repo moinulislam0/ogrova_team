@@ -154,7 +154,6 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
               ),
-
               const SizedBox(height: 28),
 
               // App name + tagline

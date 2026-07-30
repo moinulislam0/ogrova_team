@@ -80,7 +80,7 @@ class AboutScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 const Divider(),
                 const SizedBox(height: 12),
-                _aboutRow("Website", "www.ogrova.com"),
+                _aboutRow("Website", "https://ogrova.mercuviax.com/"),
                 _aboutRow("Support", "support@ogrova.com"),
                 _aboutRow("Phone", "+880 1712-345678"),
               ],

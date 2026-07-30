@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 import 'package:ogrova_team/presentation/home/view/widget/section_header.dart';
+import 'package:ogrova_team/presentation/login_screen/view/screen/login_screen.dart';
 import 'package:ogrova_team/presentation/profile_screen/view/widget/about_screen.dart';
 import 'package:ogrova_team/presentation/profile_screen/view/widget/header_widget.dart';
 import 'package:ogrova_team/presentation/profile_screen/view/widget/menu_tile_widget.dart';
@@ -29,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: ColorManager.primary,
       appBar: AppBar(
         scrolledUnderElevation: 0,
         centerTitle: true,
@@ -65,213 +68,255 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Column(
-          children: [
-            const PremiumProfileHeader(),
-            const SizedBox(height: 24),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              ColorManager.primary,
+              Color(0xFFF0FDF6),
+              Color(0xFFF8FAFC),
+              Color(0xFFF1F5F9),
+            ],
+            stops: [0.0, 0.3, 0.7, 1.0],
+          ),
+        ),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: Column(
+            children: [
+              const PremiumProfileHeader(),
+              const SizedBox(height: 24),
 
-            // Stats
-            const Row(
-              children: [
-                Expanded(
-                  child: PremiumStatCard(
-                    label: "Orders",
-                    value: "2",
-                    icon: Icons.shopping_bag_outlined,
-                    gradientColors: [Color(0xFF3B82F6), Color(0xFF1D4ED8)],
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: PremiumStatCard(
-                    label: "Reviews",
-                    value: "0",
-                    icon: Icons.star_outline_rounded,
-                    gradientColors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: PremiumStatCard(
-                    label: "Points",
-                    value: "120",
-                    icon: Icons.workspace_premium_outlined,
-                    gradientColors: [kPrimary, kPrimaryDark],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 28),
-
-            // Manage Account
-            const SectionHeader(title: "MANAGE ACCOUNT"),
-            const SizedBox(height: 12),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF64748B).withOpacity(0.08),
-                    blurRadius: 24,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Column(
+              // Stats
+              const Row(
                 children: [
-                  MenuTile(
-                    icon: Icons.shopping_bag_outlined,
-                    title: "Orders",
-                    subtitle: "Manage and track orders",
-                    iconBg: kPrimary.withOpacity(0.12),
-                    iconColor: kPrimary,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const OrderHistoryScreen(),
-                        ),
-                      );
-                    },
+                  Expanded(
+                    child: PremiumStatCard(
+                      label: "Orders",
+                      value: "2",
+                      icon: Icons.shopping_bag_outlined,
+                      gradientColors: [Color(0xFF3B82F6), Color(0xFF1D4ED8)],
+                    ),
                   ),
-                  _buildDivider(),
-                  MenuTile(
-                    icon: Icons.palette_outlined,
-                    title: "Theme",
-                    subtitle: "Light / Dark mode",
-                    iconBg: const Color(0xFFF1F5F9),
-                    iconColor: const Color(0xFF475569),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const ThemeScreen()),
-                      );
-                    },
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: PremiumStatCard(
+                      label: "Reviews",
+                      value: "0",
+                      icon: Icons.star_outline_rounded,
+                      gradientColors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+                    ),
                   ),
-                  _buildDivider(),
-                  MenuTile(
-                    icon: Icons.notifications_none_rounded,
-                    title: "Notification",
-                    subtitle: "Alerts & updates",
-                    iconBg: const Color(0xFFF1F5F9),
-                    iconColor: const Color(0xFF475569),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const NotificationScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildDivider(),
-                  MenuTile(
-                    icon: Icons.shield_outlined,
-                    title: "Security",
-                    subtitle: "Password & protection",
-                    iconBg: const Color(0xFFF1F5F9),
-                    iconColor: const Color(0xFF475569),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const SecurityScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildDivider(),
-                  MenuTile(
-                    icon: Icons.privacy_tip_outlined,
-                    title: "Privacy & Policy",
-                    subtitle: "Data & privacy rules",
-                    iconBg: const Color(0xFFF1F5F9),
-                    iconColor: const Color(0xFF475569),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const PrivacyPolicyScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildDivider(),
-                  MenuTile(
-                    icon: Icons.info_outline_rounded,
-                    title: "About",
-                    subtitle: "Learn more about us",
-                    iconBg: const Color(0xFFF1F5F9),
-                    iconColor: const Color(0xFF475569),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const AboutScreen()),
-                      );
-                    },
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: PremiumStatCard(
+                      label: "Points",
+                      value: "120",
+                      icon: Icons.workspace_premium_outlined,
+                      gradientColors: [kPrimary, kPrimaryDark],
+                    ),
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: 28),
 
-            const SizedBox(height: 28),
-
-            // Personal Info
-            const SectionHeader(title: "PERSONAL INFORMATION"),
-            const SizedBox(height: 12),
-            const PremiumPersonalInfoForm(),
-
-            const SizedBox(height: 32),
-
-            // Save Button
-            Container(
-              width: double.infinity,
-              height: 56,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18),
-                gradient: const LinearGradient(
-                  colors: [kPrimary, kPrimaryDark],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: kPrimary.withOpacity(0.35),
-                    blurRadius: 16,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: ElevatedButton.icon(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.check_circle_outline,
+              // Manage Account
+              const SectionHeader(title: "MANAGE ACCOUNT"),
+              const SizedBox(height: 12),
+              Container(
+                decoration: BoxDecoration(
                   color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF64748B).withOpacity(0.08),
+                      blurRadius: 24,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
-                label: const Text(
-                  "SAVE CHANGES",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.8,
+                child: Column(
+                  children: [
+                    MenuTile(
+                      arrowIcon: Icons.arrow_forward_ios_rounded,
+                      icon: Icons.shopping_bag_outlined,
+                      title: "Orders",
+                      subtitle: "Manage and track orders",
+                      iconBg: kPrimary.withOpacity(0.12),
+                      iconColor: kPrimary,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const OrderHistoryScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDivider(),
+                    MenuTile(
+                      arrowIcon: Icons.arrow_forward_ios_rounded,
+                      icon: Icons.palette_outlined,
+                      title: "Theme",
+                      subtitle: "Light / Dark mode",
+                      iconBg: const Color(0xFFF1F5F9),
+                      iconColor: const Color(0xFF475569),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ThemeScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDivider(),
+                    MenuTile(
+                      arrowIcon: Icons.arrow_forward_ios_rounded,
+                      icon: Icons.notifications_none_rounded,
+                      title: "Notification",
+                      subtitle: "Alerts & updates",
+                      iconBg: const Color(0xFFF1F5F9),
+                      iconColor: const Color(0xFF475569),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const NotificationScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDivider(),
+                    MenuTile(
+                      arrowIcon: Icons.arrow_forward_ios_rounded,
+                      icon: Icons.shield_outlined,
+                      title: "Security",
+                      subtitle: "Password & protection",
+                      iconBg: const Color(0xFFF1F5F9),
+                      iconColor: const Color(0xFF475569),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const SecurityScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDivider(),
+                    MenuTile(
+                      arrowIcon: Icons.arrow_forward_ios_rounded,
+                      icon: Icons.privacy_tip_outlined,
+                      title: "Privacy & Policy",
+                      subtitle: "Data & privacy rules",
+                      iconBg: const Color(0xFFF1F5F9),
+                      iconColor: const Color(0xFF475569),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const PrivacyPolicyScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDivider(),
+                    MenuTile(
+                      arrowIcon: Icons.arrow_forward_ios_rounded,
+                      icon: Icons.info_outline_rounded,
+                      title: "About",
+                      subtitle: "Learn more about us",
+                      iconBg: const Color(0xFFF1F5F9),
+                      iconColor: const Color(0xFF475569),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AboutScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDivider(),
+                    MenuTile(
+                      icon: Icons.logout,
+                      title: "LogOut",
+                      iconBg: CupertinoColors.destructiveRed,
+                      iconColor: const Color(0xFF475569),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const LoginScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 28),
+
+              // Personal Info
+              const SectionHeader(title: "PERSONAL INFORMATION"),
+              const SizedBox(height: 12),
+              const PremiumPersonalInfoForm(),
+
+              const SizedBox(height: 32),
+
+              // Save Button
+              Container(
+                width: double.infinity,
+                height: 56,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  gradient: const LinearGradient(
+                    colors: [kPrimary, kPrimaryDark],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: kPrimary.withOpacity(0.35),
+                      blurRadius: 16,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.check_circle_outline,
                     color: Colors.white,
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
+                  label: const Text(
+                    "SAVE CHANGES",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.8,
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 40),
-          ],
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );

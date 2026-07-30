@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+
 const Color kPrimary = Color(0xFF00A86B);
 const Color kPrimaryDark = Color(0xFF008C5A);
 const Color kBg = Color(0xFFF1F5F9);
 const Color kTextDark = Color(0xFF0F172A);
 const Color kTextMuted = Color(0xFF64748B);
+
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
 
@@ -43,7 +45,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                   "• Payment information is processed by trusted gateways\n"
                   "• You can request data deletion anytime\n"
                   "• Cookies are used only for better experience\n\n"
-                  "For full details, contact support@ogrowa.com",
+                  "For full details, contact support@ogrova.com",
                   style: TextStyle(
                     fontSize: 14,
                     height: 1.6,
