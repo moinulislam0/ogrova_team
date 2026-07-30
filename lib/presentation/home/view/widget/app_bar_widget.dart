@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 import 'package:ogrova_team/core/resource/constant/image_manager.dart';
 
 class OgrovaAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -8,7 +7,7 @@ class OgrovaAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: ColorManager.primary,
+      backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       scrolledUnderElevation: 0,
       elevation: 0.5,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ogrova_team/presentation/auth/welcome_screen/view/welcome_screen.dart';
-import 'package:pinput/pinput.dart'; // pinput প্যাকেজটি ইম্পোর্ট করুন
+import 'package:pinput/pinput.dart';
 
 class OtpScreen extends StatelessWidget {
   const OtpScreen({super.key});
@@ -63,12 +63,11 @@ class OtpScreen extends StatelessWidget {
               ),
               const SizedBox(height: 40),
 
-              // প্রিমিয়াম Pinput প্যাকেজ ব্যবহার
               Pinput(
-                length: 4,
+                length: 6,
                 defaultPinTheme: defaultPinTheme,
                 focusedPinTheme: focusedPinTheme,
-                onCompleted: (pin) => print(pin), // OTP দেওয়া শেষ হলে যা হবে
+                onCompleted: (pin) => print(pin),
               ),
 
               const SizedBox(height: 40),

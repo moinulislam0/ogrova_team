@@ -21,162 +21,150 @@ class _BillingAddressState extends State<BillingAddress> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text("Checkout", style: TextStyle(color: Colors.black)),
-        backgroundColor: ColorManager.primary,
+        backgroundColor: Colors.transparent,
         elevation: 0.5,
         leading: const BackButton(color: Colors.black),
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              ColorManager.primary,
-              Color(0xFFF0FDF6),
-              Color(0xFFF8FAFC),
-              Color(0xFFF1F5F9),
-            ],
-            stops: [0.0, 0.3, 0.7, 1.0],
-          ),
-        ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Billing Address Title
-              RichText(
-                text: TextSpan(
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                  children: [
-                    TextSpan(text: "Billing "),
-                    TextSpan(
-                      text: "Address",
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Billing Address Title
+            RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
-              ),
-              const SizedBox(height: 20),
-
-              // Shipping Address Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    "SHIPPING ADDRESS",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  TextButton.icon(
-                    onPressed: () => _showAddAddressModal(context),
-                    icon: const Icon(Icons.add, size: 18, color: Colors.white),
-                    label: const Text(
-                      "Add New Address",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  TextSpan(text: "Billing "),
+                  TextSpan(
+                    text: "Address",
+                    style: TextStyle(color: Colors.black),
                   ),
                 ],
               ),
+            ),
+            const SizedBox(height: 20),
 
-              // Address Cards
-              AddressCard(
-                label: "HOME",
-                name: "Samim Hossain",
-                phone: "01712345678",
-                address:
-                    "House #12, Road #5, Dhanmondi, Demra, Debidwar, Comilla, Chattagram - 1209",
-                isDefault: true,
-                isSelected: selectedAddress == 0,
-                onTap: () => setState(() => selectedAddress = 0),
-              ),
-              AddressCard(
-                label: "OFFICE",
-                name: "Samim Hossain",
-                phone: "01812345678",
-                address:
-                    "Level 5, Business Center, Banani, Dhaka Cantt., Barura, Comilla, Chattagram - 1213",
-                isDefault: false,
-                isSelected: selectedAddress == 1,
-                onTap: () => setState(() => selectedAddress = 1),
-              ),
+            // Shipping Address Header
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "SHIPPING ADDRESS",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () => _showAddAddressModal(context),
+                  icon: const Icon(
+                    Icons.add,
+                    size: 18,
+                    color: ColorManager.primary,
+                  ),
+                  label: const Text(
+                    "Add New Address",
+                    style: TextStyle(
+                      color: ColorManager.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
 
-              const SizedBox(height: 20),
-              const Text(
-                "PAYMENT METHOD *",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey,
+            // Address Cards
+            AddressCard(
+              label: "HOME",
+              name: "Samim Hossain",
+              phone: "01712345678",
+              address:
+                  "House #12, Road #5, Dhanmondi, Demra, Debidwar, Comilla, Chattagram - 1209",
+              isDefault: true,
+              isSelected: selectedAddress == 0,
+              onTap: () => setState(() => selectedAddress = 0),
+            ),
+            AddressCard(
+              label: "OFFICE",
+              name: "Samim Hossain",
+              phone: "01812345678",
+              address:
+                  "Level 5, Business Center, Banani, Dhaka Cantt., Barura, Comilla, Chattagram - 1213",
+              isDefault: false,
+              isSelected: selectedAddress == 1,
+              onTap: () => setState(() => selectedAddress = 1),
+            ),
+
+            const SizedBox(height: 20),
+            const Text(
+              "PAYMENT METHOD *",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.blueGrey,
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Payment Card
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8F5E9).withOpacity(0.5),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF00A86B)),
+              ),
+              child: RadioListTile(
+                value: "cod",
+                groupValue: selectedPayment,
+                onChanged: (val) {},
+                activeColor: const Color(0xFF00A86B),
+                title: const Text(
+                  "Cash on Delivery",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: const Text(
+                  "Pay the price after receiving the product.",
                 ),
               ),
-              const SizedBox(height: 10),
+            ),
 
-              // Payment Card
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE8F5E9).withOpacity(0.5),
+            const SizedBox(height: 20),
+            const Text(
+              "Remarks / Note (Optional)",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.blueGrey,
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: "Type your external note here...",
+                fillColor: Colors.white,
+                filled: true,
+                border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFF00A86B)),
+                  borderSide: BorderSide(color: Colors.grey.shade200),
                 ),
-                child: RadioListTile(
-                  value: "cod",
-                  groupValue: selectedPayment,
-                  onChanged: (val) {},
-                  activeColor: const Color(0xFF00A86B),
-                  title: const Text(
-                    "Cash on Delivery",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: const Text(
-                    "Pay the price after receiving the product.",
-                  ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade200),
                 ),
               ),
+            ),
 
-              const SizedBox(height: 20),
-              const Text(
-                "Remarks / Note (Optional)",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey,
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                maxLines: 3,
-                decoration: InputDecoration(
-                  hintText: "Type your external note here...",
-                  fillColor: Colors.white,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey.shade200),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey.shade200),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 30),
-              const PaymentDetailsSection(),
-              const SizedBox(height: 200), // Space for bottom button
-            ],
-          ),
+            const SizedBox(height: 30),
+            const PaymentDetailsSection(),
+            const SizedBox(height: 200), // Space for bottom button
+          ],
         ),
       ),
       bottomSheet: BottomPayButton(),

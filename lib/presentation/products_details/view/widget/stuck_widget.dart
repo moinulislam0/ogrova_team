@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 
 class StockAndSkuWidget extends StatelessWidget {
   const StockAndSkuWidget({super.key});
@@ -30,7 +31,7 @@ class StockAndSkuWidget extends StatelessWidget {
         const SizedBox(width: 15),
         const Text(
           "SKU: PRD-SKU-48SLA5",
-          style: TextStyle(color: Colors.black, fontSize: 14),
+          style: TextStyle(color: ColorManager.primary, fontSize: 14),
         ),
       ],
     );

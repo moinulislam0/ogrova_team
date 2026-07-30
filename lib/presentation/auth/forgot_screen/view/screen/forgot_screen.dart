@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ogrova_team/core/resource/constant/image_manager.dart';
 import 'package:ogrova_team/presentation/auth/otp_screen/view/screen/otp_screen.dart';
 
-
 class ForgotScreen extends StatelessWidget {
   const ForgotScreen({super.key});
 
@@ -47,7 +46,11 @@ class ForgotScreen extends StatelessWidget {
                 ),
                 const Text(
                   "RECOVERY SERVICE",
-                  style: TextStyle(color: Colors.grey, fontSize: 10, letterSpacing: 2),
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 10,
+                    letterSpacing: 2,
+                  ),
                 ),
                 const SizedBox(height: 40),
 
@@ -56,7 +59,11 @@ class ForgotScreen extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "REGISTERED EMAIL",
-                    style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -64,11 +71,21 @@ class ForgotScreen extends StatelessWidget {
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: "you@example.com",
-                    hintStyle: const TextStyle(color: Colors.white24, fontSize: 14),
-                    prefixIcon: const Icon(Icons.email_outlined, color: Colors.white38, size: 20),
+                    hintStyle: const TextStyle(
+                      color: Colors.white24,
+                      fontSize: 14,
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.email_outlined,
+                      color: Colors.white38,
+                      size: 20,
+                    ),
                     filled: true,
                     fillColor: const Color(0xFF0D1B3E),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 35),
@@ -79,19 +96,23 @@ class ForgotScreen extends StatelessWidget {
                   height: 55,
                   child: ElevatedButton(
                     onPressed: () {
-                    
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>  OtpScreen()),
+                        MaterialPageRoute(builder: (context) => OtpScreen()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFADFF2F),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: const Text(
                       "FIND ACCOUNT",
-                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -99,10 +120,19 @@ class ForgotScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Remembered password? ", style: TextStyle(color: Colors.grey, fontSize: 12)),
+                    const Text(
+                      "Remembered password? ",
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: const Text("Login", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ],
                 ),

@@ -7,7 +7,6 @@ const Color kTextDark = Color(0xFF0F172A);
 const Color kTextMuted = Color(0xFF64748B);
 
 class PremiumPersonalInfoForm extends StatelessWidget {
-  
   const PremiumPersonalInfoForm({super.key});
 
   @override
@@ -27,11 +26,10 @@ class PremiumPersonalInfoForm extends StatelessWidget {
       ),
       child: Column(
         children: [
-         
           _buildField(
             label: "Full Name",
             hintText: "Enter your full name",
-            value: "Admin One",
+
             icon: Icons.person_outline_rounded,
           ),
           const SizedBox(height: 16),
@@ -40,7 +38,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
           _buildField(
             label: "Phone Number",
             hintText: "e.g. 017XXXXXXXX",
-            value: "01711111112",
+
             icon: Icons.phone_outlined,
           ),
           const SizedBox(height: 16),
@@ -49,8 +47,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
           _buildField(
             label: "Email Address",
             hintText: "Enter your email address",
-            value:
-                "admin1@gmail.com", 
+
             icon: Icons.email_outlined,
           ),
           const SizedBox(height: 16),
@@ -87,7 +84,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
           _buildField(
             label: "Present Address",
             hintText: "House, Road, Area details...",
-            value: "Level 5, Business Center, Banani",
+
             icon: Icons.location_on_outlined,
             maxLines: 2,
           ),
@@ -96,11 +93,10 @@ class PremiumPersonalInfoForm extends StatelessWidget {
     );
   }
 
-  
   Widget _buildField({
     required String label,
     required String hintText,
-    required String value,
+
     required IconData icon,
     int maxLines = 1,
   }) {
@@ -117,7 +113,6 @@ class PremiumPersonalInfoForm extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         TextFormField(
-          initialValue: value,
           maxLines: maxLines,
           style: const TextStyle(
             fontSize: 14,
@@ -125,7 +120,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
           decoration: InputDecoration(
-            hintText: hintText, 
+            hintText: hintText,
             hintStyle: const TextStyle(
               color: Color(0xFF94A3B8),
               fontWeight: FontWeight.normal,

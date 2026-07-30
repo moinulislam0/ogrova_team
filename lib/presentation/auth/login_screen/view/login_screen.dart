@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 import 'package:ogrova_team/core/resource/constant/image_manager.dart';
 import 'package:ogrova_team/presentation/auth/forgot_screen/view/screen/forgot_screen.dart';
+import 'package:ogrova_team/presentation/main_screen/view/screen/main_screen.dart';
 import 'package:ogrova_team/presentation/register_screen/view/screen/register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -167,7 +168,12 @@ class LoginScreen extends StatelessWidget {
               width: double.infinity,
               height: 55,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => MainScreen()),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ColorManager.primary,
                   shape: RoundedRectangleBorder(
