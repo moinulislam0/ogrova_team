@@ -37,7 +37,7 @@ class CartItemCard extends StatelessWidget {
                   item['imageUrl'],
                   width: 80,
                   height: 80,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
               ),
               const SizedBox(width: 12),

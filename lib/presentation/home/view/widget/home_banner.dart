@@ -15,8 +15,8 @@ class _HomeBannerState extends State<HomeBanner> {
   final cs.CarouselSliderController controller = cs.CarouselSliderController();
 
   final List<String> bannerImages = [
-    'assets/images/logo.jfif',
-    'assets/images/logo.jfif',
+    'assets/images/ogrova_logo.png',
+    'assets/images/ogrova_logo.png',
   ];
 
   @override
@@ -37,8 +37,7 @@ class _HomeBannerState extends State<HomeBanner> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
                       image: const DecorationImage(
-                       
-                        image: AssetImage('assets/images/logo.jfif'),
+                        image: AssetImage('assets/images/ogrova_logo.png'),
                         fit: BoxFit.cover,
                       ),
                     ),
