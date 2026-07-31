@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ogrova_team/presentation/auth/welcome_screen/view/welcome_screen.dart';
+import 'package:ogrova_team/core/resource/constant/color_manager.dart';
+import 'package:ogrova_team/presentation/auth/reset_password/view/resent_password_screen.dart';
 import 'package:pinput/pinput.dart';
 
 class OtpScreen extends StatelessWidget {
@@ -7,115 +8,149 @@ class OtpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final defaultPinTheme = PinTheme(
-      width: 56,
+      width: 50, 
       height: 60,
       textStyle: const TextStyle(
         fontSize: 22,
-        color: Colors.white,
+        color: Color(0xFF1E293B),
         fontWeight: FontWeight.bold,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFF0D1B3E),
+        color: const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: Colors.grey.shade200),
       ),
     );
 
+   
     final focusedPinTheme = defaultPinTheme.copyWith(
       decoration: defaultPinTheme.decoration!.copyWith(
-        border: Border.all(color: const Color(0xFFADFF2F)),
+        border: Border.all(color: ColorManager.primary, width: 2),
       ),
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0B1425),
+      backgroundColor: Colors.white,
       body: Center(
-        child: Container(
-          margin: const EdgeInsets.all(25),
-          padding: const EdgeInsets.all(30),
-          decoration: BoxDecoration(
-            color: const Color(0xFF162136),
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.mark_email_read_outlined,
-                color: Color(0xFFADFF2F),
-                size: 60,
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                "VERIFY OTP",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Container(
+            margin: const EdgeInsets.all(25),
+            padding: const EdgeInsets.all(30),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 5,
+                  blurRadius: 10,
                 ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                "We have sent a 4-digit code to your email.\nPlease enter it below.",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey, fontSize: 12),
-              ),
-              const SizedBox(height: 40),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Icon Section
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: ColorManager.primary.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.mark_email_read_outlined,
+                    color: ColorManager.primary,
+                    size: 50,
+                  ),
+                ),
+                const SizedBox(height: 25),
+                
+                // Title
+                const Text(
+                  "VERIFY OTP",
+                  style: TextStyle(
+                    color: Color(0xFF1E293B),
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -1,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "We have sent a 6-digit code to your email.\nPlease enter it below.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.grey, 
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 40),
 
-              Pinput(
-                length: 6,
-                defaultPinTheme: defaultPinTheme,
-                focusedPinTheme: focusedPinTheme,
-                onCompleted: (pin) => print(pin),
-              ),
+                // Pinput Field
+                Pinput(
+                  length: 6,
+                  defaultPinTheme: defaultPinTheme,
+                  focusedPinTheme: focusedPinTheme,
+                  separatorBuilder: (index) => const SizedBox(width: 8),
+                  onCompleted: (pin) => print(pin),
+                ),
 
-              const SizedBox(height: 40),
+                const SizedBox(height: 40),
 
-              // Verify Button
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WelcomeSuccessScreen(),
+                // Verify Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ResetPasswordScreen(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorManager.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFADFF2F),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      "VERIFY CODE",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
+                ),
+                const SizedBox(height: 25),
+                
+                // Resend Section
+                const Text(
+                  "Didn't receive the code?",
+                  style: TextStyle(color: Colors.grey, fontSize: 13),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  style: TextButton.styleFrom(
+                    foregroundColor: ColorManager.primary,
+                  ),
                   child: const Text(
-                    "VERIFY CODE",
+                    "Resend Code",
                     style: TextStyle(
-                      color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 25),
-              const Text(
-                "Didn't receive the code?",
-                style: TextStyle(color: Colors.grey, fontSize: 12),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  "Resend Code",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
