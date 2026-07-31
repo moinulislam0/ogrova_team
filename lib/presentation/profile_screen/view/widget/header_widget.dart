@@ -47,8 +47,13 @@ class PremiumProfileHeader extends StatelessWidget {
                   const CircleAvatar(
                     radius: 38,
                     backgroundColor: Color(0xFF334155),
-                    backgroundImage: NetworkImage(
-                      'https://via.placeholder.com/150',
+                    child: Text(
+                      'A',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   Positioned(

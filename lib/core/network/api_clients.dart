@@ -3,84 +3,90 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ogrova_team/data/sources/local/shared_preference/shared_prefenrence.dart';
 
-
 import 'api_endpoints.dart';
 import 'error_handle.dart';
 import 'response_handle.dart';
-
-
 
 class ApiClient {
   static final Dio _dio = Dio(
     BaseOptions(
       baseUrl: ApiEndpoints.baseUrl,
-      connectTimeout: Duration(seconds: 10),
-      sendTimeout: Duration(seconds: 10),
-      receiveTimeout: Duration(seconds: 10),
+      connectTimeout: const Duration(seconds: 10),
+      sendTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+      // Default headers shob request er jonno
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
     ),
   );
-  static Map<String, String>? headers;
 
-  static Future <void> headerSet(String? token) async {
-    final tokn = await SharedPreferenceData.getToken();
-    log(token ?? 'token');
-    log(tokn ?? 'tokn');
+  static Map<String, String> headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
+
+  /// Token set korar jonno function
+  static Future<void> headerSet([String? manualToken]) async {
+    final storedToken = await SharedPreferenceData.getToken();
+    String? token = manualToken ?? storedToken;
+
+    log("Token initialized: ${token ?? 'No Token Found'}");
+
     headers = {
       'Content-Type': 'application/json',
-      if (token != null) 'Authorization': 'Bearer $token',
-      if (tokn != null) 'Authorization': 'Bearer $tokn',
+      'Accept': 'application/json',
     };
+
+    if (token != null && token.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $token';
+    }
+    
+    // Dio instance er default header update korchi
+    _dio.options.headers = headers;
   }
 
   /// GET request
- Future<dynamic> getRequest({
+  Future<dynamic> getRequest({
     required String endpoints,
-    // Map<String, String>? headers,
   }) async {
-   
     try {
-      log("\n\n\n\nurl :${ApiEndpoints.baseUrl}/$endpoints \n\n\n\n");
+      log("\nURL: ${ApiEndpoints.baseUrl}/$endpoints");
+      
       final response = await _dio.get(
         '/$endpoints',
-        options: Options(
-          headers: headers ?? {"Content-Type": "application/json"},
-        ),
+        options: Options(headers: headers),
       );
-      // log("\n\n\nGET Request Successful: ${response.data}\n\n\n");
+      
       return ResposeHandle.handleResponse(response);
     } catch (e) {
-      if (e is DioException) {
-        ErrorHandle.handleDioError(e);
-      } else {
-        log('Non-Dio error: $e');
-      }
+      return _handleError(e);
     }
   }
 
   /// POST request
-   Future<dynamic> postRequest({
+  Future<dynamic> postRequest({
     required String endpoints,
     Map<String, dynamic>? body,
-
     FormData? formData,
   }) async {
     try {
-      log("\n\nurl :${ApiEndpoints.baseUrl}/$endpoints\n\n");
+      log("\nURL: ${ApiEndpoints.baseUrl}/$endpoints");
+      
       final response = await _dio.post(
         '/$endpoints',
         data: body ?? formData,
         options: Options(
-          headers: headers ?? {"Content-Type": "application/json"},
+          headers: headers,
+          // Jodi FormData hoy tobe content-type automatic handle hobe
+          contentType: formData != null ? 'multipart/form-data' : 'application/json',
         ),
       );
-      //log("\nPOST Request Successful: ${response.data}\n");
+      
       return ResposeHandle.handleResponse(response);
     } catch (e) {
-      if (e is DioException) {
-        ErrorHandle.handleDioError(e);
-      } else {
-        log('Non-Dio error: $e');
-      }
+      return _handleError(e);
     }
   }
 
@@ -90,22 +96,17 @@ class ApiClient {
     required Map<String, dynamic> body,
   }) async {
     try {
-      log("\n\nurl :${ApiEndpoints.baseUrl}/$endpoints\n\n");
+      log("\nURL: ${ApiEndpoints.baseUrl}/$endpoints");
+      
       final response = await _dio.put(
         '/$endpoints',
         data: body,
-        options: Options(
-          headers: headers ?? {"Content-Type": "application/json"},
-        ),
+        options: Options(headers: headers),
       );
-      // debugPrint("\nPUT Request Successful: ${response.data}\n");
+      
       return ResposeHandle.handleResponse(response);
     } catch (e) {
-      if (e is DioException) {
-        ErrorHandle.handleDioError(e);
-      } else {
-        log('Non-Dio error: $e');
-      }
+      return _handleError(e);
     }
   }
 
@@ -113,59 +114,53 @@ class ApiClient {
   static Future<dynamic> patchRequest({
     required String endpoints,
     Map<String, dynamic>? body,
-    // Map<String, String>? headers,
     FormData? formData,
   }) async {
     try {
-      log("\n\nurl :${ApiEndpoints.baseUrl}/$endpoints\n\n");
+      log("\nURL: ${ApiEndpoints.baseUrl}/$endpoints");
+      
       final response = await _dio.patch(
-        '${ApiEndpoints.baseUrl}/$endpoints',
+        '/$endpoints',
         data: body ?? formData,
         options: Options(
-          headers: headers ?? {"Content-Type": "multipart/form-data"},
+          headers: headers,
+          contentType: formData != null ? 'multipart/form-data' : 'application/json',
         ),
       );
 
-      debugPrint("\nPATCH Request Successful");
-      debugPrint("Status: ${response.statusCode}");
-      debugPrint("Data: ${response.data}");
-
+      debugPrint("PATCH Request Successful: ${response.statusCode}");
       return ResposeHandle.handleResponse(response);
     } catch (e) {
-      if (e is DioException) {
-        ErrorHandle.handleDioError(e);
-      } else {
-        log('Non-Dio error: $e');
-      }
+      return _handleError(e);
     }
   }
 
-  /// PATCH request
+  /// DELETE request
   static Future<dynamic> deleteRequest({
     required String endpoints,
-
-    // Map<String, String>? headers,
   }) async {
     try {
-      log("\n\nurl :${ApiEndpoints.baseUrl}/$endpoints\n\n");
+      log("\nURL: ${ApiEndpoints.baseUrl}/$endpoints");
+      
       final response = await _dio.delete(
         '/$endpoints',
-        options: Options(
-          headers: headers ?? {"Content-Type": "multipart/form-data"},
-        ),
+        options: Options(headers: headers),
       );
 
-      debugPrint("delete Request Successful");
-      debugPrint("Status: ${response.statusCode}");
-      debugPrint("Data: ${response.data}");
-
+      debugPrint("DELETE Request Successful: ${response.statusCode}");
       return ResposeHandle.handleResponse(response);
     } catch (e) {
-      if (e is DioException) {
-        ErrorHandle.handleDioError(e);
-      } else {
-        log('Non-Dio error: $e');
-      }
+      return _handleError(e);
+    }
+  }
+
+  /// Common Error Handler
+  static dynamic _handleError(dynamic e) {
+    if (e is DioException) {
+      return ErrorHandle.handleDioError(e);
+    } else {
+      log('Non-Dio error: $e');
+      return null;
     }
   }
 }
