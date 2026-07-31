@@ -3,9 +3,15 @@ import 'package:flutter/material.dart';
 class BottomPayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -2))]),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -2)),
+        ],
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

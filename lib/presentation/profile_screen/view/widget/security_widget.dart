@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 
 const Color kPrimary = Color(0xFF00A86B);
 const Color kPrimaryDark = Color(0xFF008C5A);
@@ -12,76 +11,74 @@ class SecurityScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "Security",
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
-        backgroundColor: ColorManager.primary,
-        elevation: 0,
-        foregroundColor: kTextDark,
-      ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              ColorManager.primary,
-              Color(0xFFF0FDF6),
-              Color(0xFFF8FAFC),
-              Color(0xFFF1F5F9),
-            ],
-            stops: [0.0, 0.3, 0.7, 1.0],
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: colors.onSurface,
           ),
         ),
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            _secTile(
-              Icons.lock_outline_rounded,
-              "Change Password",
-              "Update your account password",
-              () {},
-            ),
-            _secTile(
-              Icons.phonelink_lock_rounded,
-              "Two-Factor Authentication",
-              "Add extra security layer",
-              () {},
-            ),
-            _secTile(
-              Icons.devices_rounded,
-              "Active Sessions",
-              "Manage logged-in devices",
-              () {},
-            ),
-            _secTile(
-              Icons.security_rounded,
-              "Login Alerts",
-              "Get notified of new logins",
-              () {},
-            ),
-          ],
-        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: colors.onSurface,
+        iconTheme: IconThemeData(color: colors.onSurface),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          _secTile(
+            context,
+            Icons.lock_outline_rounded,
+            "Change Password",
+            "Update your account password",
+            () {},
+          ),
+          _secTile(
+            context,
+            Icons.phonelink_lock_rounded,
+            "Two-Factor Authentication",
+            "Add extra security layer",
+            () {},
+          ),
+          _secTile(
+            context,
+            Icons.devices_rounded,
+            "Active Sessions",
+            "Manage logged-in devices",
+            () {},
+          ),
+          _secTile(
+            context,
+            Icons.security_rounded,
+            "Login Alerts",
+            "Get notified of new logins",
+            () {},
+          ),
+        ],
       ),
     );
   }
 
   Widget _secTile(
+    BuildContext context,
     IconData icon,
     String title,
     String subtitle,
     VoidCallback onTap,
   ) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white.withOpacity(0.12)
+              : Colors.grey.shade300,
+        ),
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
@@ -104,15 +101,22 @@ class SecurityScreen extends StatelessWidget {
         ),
         title: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 15,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         subtitle: Text(
           subtitle,
-          style: const TextStyle(fontSize: 12, color: kTextMuted),
+          style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
-        trailing: const Icon(
+        trailing: Icon(
           Icons.chevron_right_rounded,
-          color: Color(0xFFCBD5E1),
+          color: Theme.of(context).colorScheme.outline,
         ),
       ),
     );

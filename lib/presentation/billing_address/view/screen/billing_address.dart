@@ -19,13 +19,16 @@ class _BillingAddressState extends State<BillingAddress> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        title: const Text("Checkout", style: TextStyle(color: Colors.black)),
+        title: Text(
+          "Checkout",
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0.5,
-        leading: const BackButton(color: Colors.black),
+        leading: BackButton(color: Theme.of(context).colorScheme.onSurface),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -38,13 +41,13 @@ class _BillingAddressState extends State<BillingAddress> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 children: [
                   TextSpan(text: "Billing "),
                   TextSpan(
                     text: "Address",
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                   ),
                 ],
               ),
@@ -55,11 +58,11 @@ class _BillingAddressState extends State<BillingAddress> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   "SHIPPING ADDRESS",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 TextButton.icon(
@@ -116,7 +119,7 @@ class _BillingAddressState extends State<BillingAddress> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFE8F5E9).withOpacity(0.5),
+                color: Theme.of(context).colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: const Color(0xFF00A86B)),
               ),
@@ -148,7 +151,7 @@ class _BillingAddressState extends State<BillingAddress> {
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: "Type your external note here...",
-                fillColor: Colors.white,
+                fillColor: Theme.of(context).colorScheme.surface,
                 filled: true,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrova_team/core/resource/constant/image_manager.dart';
+import 'package:ogrova_team/core/resource/theme_provider.dart';
 
-class OgrovaAppBar extends StatelessWidget implements PreferredSizeWidget {
+class OgrovaAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const OgrovaAppBar({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final brightness = Theme.of(context).brightness;
+    final iconColor = Theme.of(context).colorScheme.onSurface;
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       surfaceTintColor: Colors.transparent,
       scrolledUnderElevation: 0,
       elevation: 0.5,
@@ -40,14 +44,25 @@ class OgrovaAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         IconButton(
           onPressed: () {},
-          icon: const Icon(
-            Icons.notifications_none_rounded,
-            color: Colors.black,
-          ),
+          icon: Icon(Icons.notifications_none_rounded, color: Colors.black),
         ),
         IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.wb_sunny_outlined, color: Colors.black),
+          tooltip: brightness == Brightness.dark
+              ? 'Switch to light theme'
+              : 'Switch to dark theme',
+          onPressed: () {
+            ref
+                .read(themeModeProvider.notifier)
+                .state = brightness == Brightness.dark
+                ? ThemeMode.light
+                : ThemeMode.dark;
+          },
+          icon: Icon(
+            brightness == Brightness.dark
+                ? Icons.dark_mode_outlined
+                : Icons.wb_sunny_outlined,
+            color: iconColor,
+          ),
         ),
         const SizedBox(width: 8),
       ],

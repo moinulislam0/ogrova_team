@@ -7,20 +7,23 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: () {
         Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>const  ProductDetailsScreen(),
-      ),
-    );
+          context,
+          MaterialPageRoute(builder: (context) => const ProductDetailsScreen()),
+        );
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(25),
-          border: Border.all(color: Colors.blue.shade50, width: 1.5),
+          border: Border.all(
+            color: isDark ? Color(0xFF3A4B43) : Color(0xFFE2E8F0),
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.02),
@@ -36,7 +39,10 @@ class ProductCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 12, left: 12),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFF00A86B),
                   borderRadius: BorderRadius.circular(8),
@@ -52,16 +58,18 @@ class ProductCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 5),
-      
+
             // Image Section
             Expanded(
               child: Container(
                 width: double.infinity,
-                decoration: const BoxDecoration(color: Color(0xFFF8F9FA)),
+                decoration: BoxDecoration(
+                  color: colors.surfaceContainerHighest,
+                ),
                 child: Image.asset(ImageManager.logo, fit: BoxFit.contain),
               ),
             ),
-      
+
             // Details Section
             Padding(
               padding: const EdgeInsets.fromLTRB(15, 8, 15, 15),
@@ -75,7 +83,7 @@ class ProductCard extends StatelessWidget {
                         child: Text(
                           "ELECTRONICS ",
                           style: TextStyle(
-                            color: Colors.blueGrey,
+                            color: colors.onSurfaceVariant,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
@@ -113,21 +121,21 @@ class ProductCard extends StatelessWidget {
                       ),
                     ],
                   ),
-      
+
                   const SizedBox(height: 6),
-      
+
                   const Text(
                     "Sample Product 308 Long Name Example ",
-      
+
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                       height: 1.2,
                     ),
                   ),
-      
+
                   const SizedBox(height: 4),
-      
+
                   Row(
                     children: List.generate(
                       5,
@@ -138,9 +146,9 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                   ),
-      
+
                   const SizedBox(height: 10),
-      
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -148,7 +156,7 @@ class ProductCard extends StatelessWidget {
                         "৳1,100",
                         style: TextStyle(
                           decoration: TextDecoration.lineThrough,
-                          color: Colors.grey.shade400,
+                          color: colors.onSurfaceVariant,
                           fontSize: 16,
                         ),
                       ),

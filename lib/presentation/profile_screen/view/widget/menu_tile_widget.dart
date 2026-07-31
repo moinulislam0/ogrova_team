@@ -22,6 +22,7 @@ class MenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -34,10 +35,10 @@ class MenuTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: iconBg,
+                  color: iconBg ?? colors.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, color: iconColor, size: 22),
+                child: Icon(icon, color: iconColor ?? colors.onSurfaceVariant, size: 22),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -46,27 +47,27 @@ class MenuTile extends StatelessWidget {
                   children: [
                     Text(
                       title ?? "",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
-                        color: Color(0xFF1E293B),
+                        color: colors.onSurface,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle ?? "",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
-                        color: Color(0xFF94A3B8),
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
               ),
-               Icon(
-               arrowIcon ,
+              Icon(
+                arrowIcon,
                 size: 14,
-                color: Color(0xFFCBD5E1),
+                color: colors.outline,
               ),
             ],
           ),

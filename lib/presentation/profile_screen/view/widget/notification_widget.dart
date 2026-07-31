@@ -22,67 +22,60 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "Notification",
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
-        backgroundColor: ColorManager.primary,
-        elevation: 0,
-        foregroundColor: kTextDark,
-      ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              ColorManager.primary,
-              Color(0xFFF0FDF6),
-              Color(0xFFF8FAFC),
-              Color(0xFFF1F5F9),
-            ],
-            stops: [0.0, 0.3, 0.7, 1.0],
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: colors.onSurface,
           ),
         ),
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            _switchTile(
-              "Order Updates",
-              "Get notified about order status",
-              orderUpdates,
-              (v) => setState(() => orderUpdates = v),
-            ),
-            _switchTile(
-              "Promotions & Offers",
-              "Special deals and discounts",
-              promotions,
-              (v) => setState(() => promotions = v),
-            ),
-            _switchTile(
-              "Security Alerts",
-              "Login & password change alerts",
-              securityAlerts,
-              (v) => setState(() => securityAlerts = v),
-            ),
-            _switchTile(
-              "Newsletter",
-              "Weekly product & news updates",
-              newsletter,
-              (v) => setState(() => newsletter = v),
-            ),
-          ],
-        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: colors.onSurface,
+        iconTheme: IconThemeData(color: colors.onSurface),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          _switchTile(
+            context,
+            "Order Updates",
+            "Get notified about order status",
+            orderUpdates,
+            (v) => setState(() => orderUpdates = v),
+          ),
+          _switchTile(
+            context,
+            "Promotions & Offers",
+            "Special deals and discounts",
+            promotions,
+            (v) => setState(() => promotions = v),
+          ),
+          _switchTile(
+            context,
+            "Security Alerts",
+            "Login & password change alerts",
+            securityAlerts,
+            (v) => setState(() => securityAlerts = v),
+          ),
+          _switchTile(
+            context,
+            "Newsletter",
+            "Weekly product & news updates",
+            newsletter,
+            (v) => setState(() => newsletter = v),
+          ),
+        ],
       ),
     );
   }
 
   Widget _switchTile(
+    BuildContext context,
     String title,
     String subtitle,
     bool value,
@@ -90,9 +83,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.all(
+          color: ColorManager.settingsCardBorder(Theme.of(context).brightness),
+        ),
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
@@ -102,19 +98,78 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
         ],
       ),
-      child: SwitchListTile(
-        contentPadding: EdgeInsets.zero,
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          _themeSwitch(context, value, onChanged),
+        ],
+      ),
+    );
+  }
+
+  Widget _themeSwitch(
+    BuildContext context,
+    bool value,
+    ValueChanged<bool> onChanged,
+  ) {
+    final colors = Theme.of(context).colorScheme;
+    return Semantics(
+      toggled: value,
+      button: true,
+      child: GestureDetector(
+        onTap: () => onChanged(!value),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          width: 46,
+          height: 27,
+          padding: const EdgeInsets.all(3),
+          decoration: BoxDecoration(
+            color: value ? kPrimary.withValues(alpha: 0.45) : colors.surface,
+            border: Border.all(
+              color: value
+                  ? kPrimary
+                  : ColorManager.settingsCardBorder(
+                      Theme.of(context).brightness,
+                    ),
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: AnimatedAlign(
+            duration: const Duration(milliseconds: 180),
+            alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+            child: Container(
+              width: 19,
+              height: 19,
+              decoration: BoxDecoration(
+                color: value ? kPrimary : colors.onSurfaceVariant,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
         ),
-        subtitle: Text(
-          subtitle,
-          style: const TextStyle(fontSize: 12, color: kTextMuted),
-        ),
-        value: value,
-        activeColor: kPrimary,
-        onChanged: onChanged,
       ),
     );
   }

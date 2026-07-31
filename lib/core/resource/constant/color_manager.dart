@@ -8,13 +8,21 @@ class ColorManager {
   // ===== Primary Colors =====
   static const Color primary = Color(0xFF00A86B);
   static const Color primaryLight = Color(0xFF334289);
-  static const Color primaryDark = Color(0xFF000C48);
+  static const Color primaryDark = Color(0xFF008C5A);
 
   // ===== Background Colors =====
   static const Color background = Color(0xFFF5F5F5);
   static const Color backgroundDark = Color(0xFF121212);
   static const Color scaffoldLight = Color(0xFFFFFFFF);
   static const Color scaffoldDark = Color(0xFF1E1E1E);
+  static const Color darkSurface = Color(0xFF17211D);
+  static const Color darkBackground = Color(0xFF101714);
+  static const Color darkSurfaceVariant = Color(0xFF1D2A25);
+  static const Color lightCardBorder = Color(0xFFE2E8F0);
+  static const Color darkCardBorder = Color(0xFF3A4B43);
+
+  static Color settingsCardBorder(Brightness brightness) =>
+      brightness == Brightness.dark ? darkCardBorder : lightCardBorder;
 
   // ===== Text Colors =====
   static const Color textPrimary = Color(0xFF212121);
@@ -47,8 +55,7 @@ class ColorManager {
   static const Color errorColor = Color(0xFFE25839);
   static const Color successColor = Color(0xFF388E3C);
   static const Color warningColor = Color(0xFFFFA000);
-  static const Color infoColor = Color(0xFF1976D2);
+  static const Color infoColor = Color(0xFF388E3C);
 
   // ===== Utility Colors =====
- 
 }

@@ -12,12 +12,13 @@ class PriceBoxWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.grey.shade100),
+        border: Border.all(color: colors.outlineVariant),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,10 +70,10 @@ class PriceBoxWidget extends StatelessWidget {
               ),
             ],
           ),
-          const CircleAvatar(
+          CircleAvatar(
             radius: 25,
-            backgroundColor: Colors.white,
-            child: Icon(Icons.sell_outlined, color: Colors.grey),
+            backgroundColor: colors.surfaceContainerHighest,
+            child: Icon(Icons.sell_outlined, color: colors.onSurfaceVariant),
           ),
         ],
       ),

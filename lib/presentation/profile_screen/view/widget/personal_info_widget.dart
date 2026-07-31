@@ -11,10 +11,11 @@ class PremiumPersonalInfoForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -27,6 +28,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
       child: Column(
         children: [
           _buildField(
+            context,
             label: "Full Name",
             hintText: "Enter your full name",
 
@@ -36,6 +38,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
 
           // Phone Number
           _buildField(
+            context,
             label: "Phone Number",
             hintText: "e.g. 017XXXXXXXX",
 
@@ -45,6 +48,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
 
           // Email Address
           _buildField(
+            context,
             label: "Email Address",
             hintText: "Enter your email address",
 
@@ -56,7 +60,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _buildDropdownField("Gender", [
+                child: _buildDropdownField(context, "Gender", [
                   "Select",
                   "Male",
                   "Female",
@@ -64,7 +68,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _buildDropdownField("Blood Group", [
+                child: _buildDropdownField(context, "Blood Group", [
                   "Select",
                   "A+",
                   "B+",
@@ -82,6 +86,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
 
           // Present Address
           _buildField(
+            context,
             label: "Present Address",
             hintText: "House, Road, Area details...",
 
@@ -93,41 +98,43 @@ class PremiumPersonalInfoForm extends StatelessWidget {
     );
   }
 
-  Widget _buildField({
+  Widget _buildField(
+    BuildContext context, {
     required String label,
     required String hintText,
 
     required IconData icon,
     int maxLines = 1,
   }) {
+    final colors = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF475569),
+            color: colors.onSurface,
           ),
         ),
         const SizedBox(height: 6),
         TextFormField(
           maxLines: maxLines,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: kTextDark,
+            color: colors.onSurface,
             fontWeight: FontWeight.w500,
           ),
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: const TextStyle(
-              color: Color(0xFF94A3B8),
+            hintStyle: TextStyle(
+              color: colors.onSurfaceVariant,
               fontWeight: FontWeight.normal,
             ),
-            prefixIcon: Icon(icon, color: const Color(0xFF94A3B8), size: 20),
+            prefixIcon: Icon(icon, color: colors.onSurfaceVariant, size: 20),
             filled: true,
-            fillColor: const Color(0xFFF8FAFC),
+            fillColor: colors.surfaceContainerHighest,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 14,
@@ -138,7 +145,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+              borderSide: BorderSide(color: colors.outlineVariant),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
@@ -150,16 +157,21 @@ class PremiumPersonalInfoForm extends StatelessWidget {
     );
   }
 
-  Widget _buildDropdownField(String label, List<String> items) {
+  Widget _buildDropdownField(
+    BuildContext context,
+    String label,
+    List<String> items,
+  ) {
+    final colors = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF475569),
+            color: colors.onSurface,
           ),
         ),
         const SizedBox(height: 6),
@@ -169,25 +181,28 @@ class PremiumPersonalInfoForm extends StatelessWidget {
               .map(
                 (e) => DropdownMenuItem(
                   value: e,
-                  child: Text(e, style: const TextStyle(fontSize: 14)),
+                  child: Text(
+                    e,
+                    style: TextStyle(fontSize: 14, color: colors.onSurface),
+                  ),
                 ),
               )
               .toList(),
           onChanged: (val) {},
-          icon: const Icon(
+          icon: Icon(
             Icons.keyboard_arrow_down_rounded,
-            color: Color(0xFF94A3B8),
+            color: colors.onSurfaceVariant,
           ),
           decoration: InputDecoration(
             filled: true,
-            fillColor: const Color(0xFFF8FAFC),
+            fillColor: colors.surfaceContainerHighest,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 14,
               vertical: 14,
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+              borderSide: BorderSide(color: colors.outlineVariant),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),

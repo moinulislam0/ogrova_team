@@ -52,7 +52,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 350),
         switchInCurve: Curves.easeOutCubic,
@@ -74,15 +74,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           child: _pages[_selectedIndex],
         ),
       ),
-      bottomNavigationBar: _buildPremiumBottomNav(),
+      bottomNavigationBar: _buildPremiumBottomNav(context),
     );
   }
 
-  Widget _buildPremiumBottomNav() {
+  Widget _buildPremiumBottomNav(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
@@ -106,18 +107,21 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildNavItem(
+                context: context,
                 index: 0,
                 icon: Icons.home_outlined,
                 activeIcon: Icons.home_rounded,
                 label: 'Home',
               ),
               _buildNavItem(
+                context: context,
                 index: 1,
                 icon: Icons.shopping_cart_outlined,
                 activeIcon: Icons.shopping_cart_rounded,
                 label: 'Cart',
               ),
               _buildNavItem(
+                context: context,
                 index: 2,
                 icon: Icons.person_outline_rounded,
                 activeIcon: Icons.person_rounded,
@@ -131,12 +135,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildNavItem({
+    required BuildContext context,
     required int index,
     required IconData icon,
     required IconData activeIcon,
     required String label,
   }) {
     final bool isSelected = _selectedIndex == index;
+    final colors = Theme.of(context).colorScheme;
 
     return GestureDetector(
       onTap: () => _onItemTapped(index),
@@ -150,7 +156,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFF00A86B).withOpacity(0.12)
+              ? colors.secondary.withValues(alpha: 0.12)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
@@ -164,9 +170,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               child: Icon(
                 isSelected ? activeIcon : icon,
                 size: 24,
-                color: isSelected
-                    ? const Color(0xFF00A86B)
-                    : const Color(0xFF94A3B8),
+                color: isSelected ? colors.secondary : colors.onSurfaceVariant,
               ),
             ),
             AnimatedSize(
@@ -177,10 +181,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       padding: const EdgeInsets.only(left: 8),
                       child: Text(
                         label,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF00A86B),
+                          color: colors.secondary,
                           letterSpacing: 0.2,
                         ),
                       ),

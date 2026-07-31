@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 
 class VariantCard extends StatelessWidget {
   final String title, price, left;
@@ -14,14 +15,19 @@ class VariantCard extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFE8F5E9) : Colors.white,
+        color: isSelected
+            ? ColorManager.primary.withValues(alpha: .5)
+            : colors.surface,
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: isSelected ? const Color(0xFF00A86B) : Colors.grey.shade200,
+          color: isSelected
+              ? ColorManager.primary.withValues(alpha: .5)
+              : colors.outlineVariant,
           width: 1.5,
         ),
       ),
@@ -32,7 +38,11 @@ class VariantCard extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: colors.onSurface,
+              ),
             ),
           ),
           Text(
@@ -40,14 +50,14 @@ class VariantCard extends StatelessWidget {
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 15,
-              color: Color(0xFF00A86B),
+              color: ColorManager.primary,
             ),
           ),
           const SizedBox(width: 12),
           Text(
             left,
             style: const TextStyle(
-              color: Colors.green,
+              color: ColorManager.primary,
               fontSize: 12,
               fontWeight: FontWeight.bold,
             ),
@@ -57,4 +67,3 @@ class VariantCard extends StatelessWidget {
     );
   }
 }
-

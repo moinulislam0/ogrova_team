@@ -14,6 +14,7 @@ class CartItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     double totalItemPrice = (item['discountedPrice'] * item['quantity'])
         .toDouble();
     int totalItemPoints = item['pointsPerUnit'] * item['quantity'];
@@ -22,9 +23,9 @@ class CartItemCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.shade100),
+        border: Border.all(color: colors.outlineVariant),
       ),
       child: Column(
         children: [
@@ -50,9 +51,10 @@ class CartItemCard extends StatelessWidget {
                       children: [
                         Text(
                           item['name'],
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
+                            color: colors.onSurface,
                           ),
                         ),
                         GestureDetector(
@@ -106,7 +108,7 @@ class CartItemCard extends StatelessWidget {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade200),
+                  border: Border.all(color: colors.outlineVariant),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
@@ -116,7 +118,10 @@ class CartItemCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Text(
                         "${item['quantity']}",
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: colors.onSurface,
+                        ),
                       ),
                     ),
                     _qtyBtn(Icons.add, onIncrement),
@@ -165,21 +170,22 @@ class CartItemCard extends StatelessWidget {
                 children: [
                   Text(
                     "UNIT: ৳${item['unitPrice']}",
-                    style: const TextStyle(fontSize: 11, color: Colors.grey),
+                    style: TextStyle(fontSize: 11, color: colors.onSurfaceVariant),
                   ),
-                  const Text(
+                   Text(
                     "৳485.00",
                     style: TextStyle(
                       fontSize: 11,
-                      color: Colors.grey,
+                      color: colors.onSurfaceVariant,
                       decoration: TextDecoration.lineThrough,
                     ),
                   ),
                   Text(
                     "৳${totalItemPrice.toStringAsFixed(0)}",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: colors.onSurface,
                     ),
                   ),
                 ],

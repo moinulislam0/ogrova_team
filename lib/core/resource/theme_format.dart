@@ -27,6 +27,7 @@ ThemeData getApplicationTheme() {
       shadowColor: ColorManager.subtitleText,
       elevation: AppSize.s4,
       shape: RoundedRectangleBorder(
+        side: const BorderSide(color: ColorManager.lightCardBorder),
         borderRadius: BorderRadius.circular(AppSize.s8),
       ),
     ),
@@ -143,5 +144,63 @@ ThemeData getApplicationTheme() {
 
     // ===== Icon Theme =====
     iconTheme: IconThemeData(color: ColorManager.primary, size: AppSize.s24),
+  );
+}
+
+/// Dark palette used by every Material widget in the application.
+ThemeData getDarkApplicationTheme() {
+  const scheme = ColorScheme.dark(
+    primary: ColorManager.primary,
+    onPrimary: ColorManager.whiteColor,
+    secondary: Color(0xFF6EE7B7),
+    surface: Color(0xFF17211D),
+    onSurface: Color(0xFFF1F5F9),
+    error: ColorManager.errorColor,
+    onError: ColorManager.whiteColor,
+  );
+
+  return ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    colorScheme: scheme,
+    scaffoldBackgroundColor: ColorManager.darkBackground,
+    canvasColor: ColorManager.darkBackground,
+    cardColor: scheme.surface,
+    dividerColor: const Color(0xFF334155),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.transparent,
+      foregroundColor: Color(0xFFF1F5F9),
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+    ),
+    cardTheme: CardThemeData(
+      color: scheme.surface,
+      shadowColor: Colors.black54,
+      shape: RoundedRectangleBorder(
+        side: const BorderSide(color: ColorManager.darkCardBorder),
+        borderRadius: BorderRadius.circular(AppSize.s8),
+      ),
+    ),
+    textTheme: const TextTheme(
+      headlineLarge: TextStyle(color: Color(0xFFF1F5F9)),
+      titleMedium: TextStyle(color: Color(0xFFF1F5F9)),
+      bodyMedium: TextStyle(color: Color(0xFFF1F5F9)),
+      bodySmall: TextStyle(color: Color(0xFFB6C4BD)),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: const Color(0xFF1D2A25),
+      hintStyle: const TextStyle(color: Color(0xFFB6C4BD)),
+      labelStyle: const TextStyle(color: Color(0xFFF1F5F9)),
+      enabledBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Color(0xFF3A4B43)),
+        borderRadius: BorderRadius.circular(AppSize.s8),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: ColorManager.primary),
+        borderRadius: BorderRadius.circular(AppSize.s8),
+      ),
+    ),
+    iconTheme: const IconThemeData(color: Color(0xFFF1F5F9)),
   );
 }

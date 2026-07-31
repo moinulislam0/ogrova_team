@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 
 class DeliveryInfoWidget extends StatelessWidget {
   const DeliveryInfoWidget({super.key});
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: const Color(0xFFE8F5E9).withOpacity(0.5),
+        color: ColorManager.primary,
         borderRadius: BorderRadius.circular(15),
       ),
-      child: const Row(
+      child: Row(
         children: [
           CircleAvatar(
-            backgroundColor: Color(0xFF00A86B),
-            child: Icon(Icons.flash_on, color: Colors.white, size: 20),
+            backgroundColor: Colors.black,
+            child: Icon(Icons.flash_on, color: colors.onPrimary, size: 20),
           ),
           SizedBox(width: 15),
           Expanded(
@@ -26,12 +28,15 @@ class DeliveryInfoWidget extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
-                    color: Color(0xFF00A86B),
+                    color: Colors.black,
                   ),
                 ),
                 Text(
                   "Order within 02h 45m to receive your package by tomorrow.",
-                  style: TextStyle(fontSize: 12, color: Colors.blueGrey),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: colors.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),

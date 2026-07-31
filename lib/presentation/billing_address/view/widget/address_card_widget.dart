@@ -18,16 +18,17 @@ class AddressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
-            color: isSelected ? const Color(0xFF00A86B) : Colors.grey.shade200,
+            color: isSelected ? colors.primary : colors.outlineVariant,
             width: 1.5,
           ),
         ),
@@ -42,24 +43,25 @@ class AddressCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: colors.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
-                      color: Colors.blueGrey,
+                      color: colors.onSurfaceVariant,
                     ),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Text(
                   name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
+                    color: colors.onSurface,
                   ),
                 ),
                 const Spacer(),
@@ -92,16 +94,20 @@ class AddressCard extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                const Icon(Icons.phone_outlined, size: 16, color: Colors.grey),
+                Icon(
+                  Icons.phone_outlined,
+                  size: 16,
+                  color: colors.onSurfaceVariant,
+                ),
                 const SizedBox(width: 5),
-                Text(phone, style: const TextStyle(color: Colors.grey)),
+                Text(phone, style: TextStyle(color: colors.onSurfaceVariant)),
               ],
             ),
             const SizedBox(height: 8),
             Text(
               address,
-              style: const TextStyle(
-                color: Colors.black87,
+              style: TextStyle(
+                color: colors.onSurface,
                 fontSize: 13,
                 height: 1.4,
               ),

@@ -35,10 +35,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         scrolledUnderElevation: 0,
         centerTitle: true,
-        title: const Text(
+        title: Text(
           "My Profile",
           style: TextStyle(
-            color: kTextDark,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w800,
             fontSize: 20,
             letterSpacing: -0.5,
@@ -50,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Container(
             margin: const EdgeInsets.only(right: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
@@ -62,7 +62,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             child: IconButton(
               onPressed: () {},
-              icon: const Icon(Icons.refresh_rounded, color: Color(0xFF475569)),
+              icon: Icon(
+                Icons.refresh_rounded,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         ],
@@ -113,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
@@ -141,7 +144,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                   ),
-                  _buildDivider(),
+                  _buildDivider(context),
                   MenuTile(
                     arrowIcon: Icons.arrow_forward_ios_rounded,
                     icon: Icons.palette_outlined,
@@ -156,7 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                   ),
-                  _buildDivider(),
+                  _buildDivider(context),
                   MenuTile(
                     arrowIcon: Icons.arrow_forward_ios_rounded,
                     icon: Icons.notifications_none_rounded,
@@ -173,7 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                   ),
-                  _buildDivider(),
+                  _buildDivider(context),
                   MenuTile(
                     arrowIcon: Icons.arrow_forward_ios_rounded,
                     icon: Icons.shield_outlined,
@@ -190,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                   ),
-                  _buildDivider(),
+                  _buildDivider(context),
                   MenuTile(
                     arrowIcon: Icons.arrow_forward_ios_rounded,
                     icon: Icons.privacy_tip_outlined,
@@ -207,7 +210,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                   ),
-                  _buildDivider(),
+                  _buildDivider(context),
                   MenuTile(
                     arrowIcon: Icons.arrow_forward_ios_rounded,
                     icon: Icons.info_outline_rounded,
@@ -222,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                   ),
-                  _buildDivider(),
+                  _buildDivider(context),
                   MenuTile(
                     icon: Icons.logout,
                     title: "LogOut",
@@ -298,7 +301,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildDivider() {
-    return const Divider(height: 1, thickness: 1, color: Color(0xFFF1F5F9));
+  Widget _buildDivider(BuildContext context) {
+    return Divider(
+      height: 1,
+      thickness: 1,
+      color: Theme.of(context).dividerColor,
+    );
   }
 }

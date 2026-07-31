@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 const Color kPrimary = Color(0xFF00A86B);
 const Color kPrimaryDark = Color(0xFF008C5A);
 const Color kBg = Color(0xFFF1F5F9);
@@ -10,6 +11,7 @@ class OrderDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: Colors.black54,
       body: Center(
@@ -17,8 +19,9 @@ class OrderDetailsScreen extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
           constraints: const BoxConstraints(maxWidth: 480),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: colors.outlineVariant),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -32,12 +35,12 @@ class OrderDetailsScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             "Order Details",
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w800,
-                              color: kTextDark,
+                              color: colors.onSurface,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -70,42 +73,44 @@ class OrderDetailsScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF8FAFC),
+                          color: colors.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Row(
                           children: [
-                            _infoItem("Order Date", "Jul 30, 2026"),
+                            _infoItem(context, "Order Date", "Jul 30, 2026"),
                             _infoItem(
+                              context,
                               "Order Status",
                               "Pending",
                               isStatus: true,
                             ),
-                            _infoItem("Payment Method", "COD (PENDING)"),
+                            _infoItem(context, "Payment Method", "COD (PENDING)"),
                           ],
                         ),
                       ),
                       const SizedBox(height: 20),
 
                       // Timeline
-                      const Text(
+                      Text(
                         "Order Timeline",
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
+                          color: colors.onSurface,
                         ),
                       ),
                       const SizedBox(height: 14),
-                      _buildTimeline(),
+                      _buildTimeline(context),
                       const SizedBox(height: 24),
 
                       // Shipping Details
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: colors.surface,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                          border: Border.all(color: colors.outlineVariant),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +130,7 @@ class OrderDetailsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                const Column(
+                                Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
@@ -133,13 +138,14 @@ class OrderDetailsScreen extends StatelessWidget {
                                       style: TextStyle(
                                         fontWeight: FontWeight.w700,
                                         fontSize: 14,
+                                        color: colors.onSurface,
                                       ),
                                     ),
                                     Text(
                                       "Customer delivery information",
                                       style: TextStyle(
                                         fontSize: 11,
-                                        color: kTextMuted,
+                                        color: colors.onSurfaceVariant,
                                       ),
                                     ),
                                   ],
@@ -148,18 +154,21 @@ class OrderDetailsScreen extends StatelessWidget {
                             ),
                             const Divider(height: 24),
                             _shipRow(
+                              context,
                               Icons.person_outline,
                               "RECIPIENT",
                               "Samim Hossain",
                             ),
                             const SizedBox(height: 12),
                             _shipRow(
+                              context,
                               Icons.phone_outlined,
                               "PHONE",
                               "01712345678",
                             ),
                             const SizedBox(height: 12),
                             _shipRow(
+                              context,
                               Icons.location_on_outlined,
                               "ADDRESS",
                               "House #12, Road #5, Dhanmondi",
@@ -170,12 +179,12 @@ class OrderDetailsScreen extends StatelessWidget {
                       const SizedBox(height: 24),
 
                       // Items
-                      const Text(
+                      Text(
                         "ITEMS ORDERED",
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          color: kTextMuted,
+                          color: colors.onSurfaceVariant,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -183,10 +192,10 @@ class OrderDetailsScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF8FAFC),
+                          color: colors.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: const Row(
+                        child: Row(
                           children: [
                             Expanded(
                               child: Column(
@@ -197,6 +206,7 @@ class OrderDetailsScreen extends StatelessWidget {
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
+                                      color: colors.onSurface,
                                     ),
                                   ),
                                   SizedBox(height: 2),
@@ -204,7 +214,7 @@ class OrderDetailsScreen extends StatelessWidget {
                                     "Qty : 1 × ৳148.00",
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: kTextMuted,
+                                      color: colors.onSurfaceVariant,
                                     ),
                                   ),
                                 ],
@@ -215,6 +225,7 @@ class OrderDetailsScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14,
+                                color: colors.onSurface,
                               ),
                             ),
                           ],
@@ -242,16 +253,16 @@ class OrderDetailsScreen extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFFE2E8F0)),
+                      side: BorderSide(color: colors.outlineVariant),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Close",
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: kTextDark,
+                        color: colors.onSurface,
                       ),
                     ),
                   ),
@@ -264,12 +275,21 @@ class OrderDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _infoItem(String label, String value, {bool isStatus = false}) {
+  Widget _infoItem(
+    BuildContext context,
+    String label,
+    String value, {
+    bool isStatus = false,
+  }) {
+    final colors = Theme.of(context).colorScheme;
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontSize: 11, color: kTextMuted)),
+          Text(
+            label,
+            style: TextStyle(fontSize: 11, color: colors.onSurfaceVariant),
+          ),
           const SizedBox(height: 4),
           isStatus
               ? Container(
@@ -292,9 +312,10 @@ class OrderDetailsScreen extends StatelessWidget {
                 )
               : Text(
                   value,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
+                    color: colors.onSurface,
                   ),
                 ),
         ],
@@ -302,7 +323,8 @@ class OrderDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTimeline() {
+  Widget _buildTimeline(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     final steps = [
       {"title": "Placed", "date": "Jul 30, 2026", "done": true},
       {"title": "Confirmed", "date": "Pending", "done": false},
@@ -321,7 +343,7 @@ class OrderDetailsScreen extends StatelessWidget {
             return Container(
               width: 28,
               height: 2,
-              color: const Color(0xFFE2E8F0),
+              color: colors.outlineVariant,
             );
           }
           final step = steps[i ~/ 2];
@@ -332,17 +354,17 @@ class OrderDetailsScreen extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: done ? kPrimary : Colors.white,
+                  color: done ? kPrimary : colors.surface,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: done ? kPrimary : const Color(0xFFCBD5E1),
+                    color: done ? kPrimary : colors.outline,
                     width: 2,
                   ),
                 ),
                 child: Icon(
                   done ? Icons.shopping_bag : Icons.circle_outlined,
                   size: 16,
-                  color: done ? Colors.white : const Color(0xFFCBD5E1),
+                  color: done ? Colors.white : colors.outline,
                 ),
               ),
               const SizedBox(height: 6),
@@ -351,14 +373,14 @@ class OrderDetailsScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: done ? kTextDark : kTextMuted,
+                  color: done ? colors.onSurface : colors.onSurfaceVariant,
                 ),
               ),
               Text(
                 step["date"] as String,
                 style: TextStyle(
                   fontSize: 10,
-                  color: done ? kPrimary : kTextMuted,
+                  color: done ? kPrimary : colors.onSurfaceVariant,
                 ),
               ),
             ],
@@ -368,31 +390,37 @@ class OrderDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _shipRow(IconData icon, String label, String value) {
+  Widget _shipRow(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+  ) {
+    final colors = Theme.of(context).colorScheme;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: kTextMuted),
+        Icon(icon, size: 18, color: colors.onSurfaceVariant),
         const SizedBox(width: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
-                color: kTextMuted,
+                color: colors.onSurfaceVariant,
                 letterSpacing: 0.4,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: kTextDark,
+                color: colors.onSurface,
               ),
             ),
           ],
@@ -417,7 +445,7 @@ class OrderDetailsScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: isTotal ? 15 : 13,
               fontWeight: isTotal ? FontWeight.w800 : FontWeight.w500,
-              color: isDiscount ? kPrimary : kTextDark,
+              color: isDiscount ? kPrimary : null,
             ),
           ),
           Text(
@@ -429,7 +457,7 @@ class OrderDetailsScreen extends StatelessWidget {
                   ? kPrimary
                   : isDiscount
                   ? kPrimary
-                  : kTextDark,
+                  : null,
             ),
           ),
         ],
