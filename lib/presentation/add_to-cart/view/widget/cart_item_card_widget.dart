@@ -14,6 +14,7 @@ class CartItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final colors = Theme.of(context).colorScheme;
     double totalItemPrice = (item['discountedPrice'] * item['quantity'])
         .toDouble();
@@ -25,7 +26,7 @@ class CartItemCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: colors.outlineVariant),
+        border: Border.all(color: isDark ? Colors.white : Colors.grey),
       ),
       child: Column(
         children: [
@@ -108,7 +109,9 @@ class CartItemCard extends StatelessWidget {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: colors.outlineVariant),
+                  border: Border.all(
+                    color: isDark ? Colors.white : Colors.grey,
+                  ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
@@ -170,9 +173,12 @@ class CartItemCard extends StatelessWidget {
                 children: [
                   Text(
                     "UNIT: ৳${item['unitPrice']}",
-                    style: TextStyle(fontSize: 11, color: colors.onSurfaceVariant),
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: colors.onSurfaceVariant,
+                    ),
                   ),
-                   Text(
+                  Text(
                     "৳485.00",
                     style: TextStyle(
                       fontSize: 11,

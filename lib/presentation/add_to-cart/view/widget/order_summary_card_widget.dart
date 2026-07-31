@@ -13,10 +13,12 @@ class OrderSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final colors = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
+        border: Border.all(color: isDark ? Colors.white : Colors.grey),
         color: colors.surface,
         borderRadius: BorderRadius.circular(25),
         boxShadow: [

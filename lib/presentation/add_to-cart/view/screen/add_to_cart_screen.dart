@@ -51,6 +51,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
         leading: BackButton(color: Theme.of(context).colorScheme.onSurface),
       ),
       body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
