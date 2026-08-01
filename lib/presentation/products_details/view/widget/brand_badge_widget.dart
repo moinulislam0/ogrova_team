@@ -1,31 +1,19 @@
 import 'package:flutter/material.dart';
 
 class BrandAndBadges extends StatelessWidget {
-  const BrandAndBadges({super.key});
+   final String brandName;
+  final String categoryName;
+  final String? discount;
+  const BrandAndBadges({super.key, required this.brandName, required this.categoryName, this.discount});
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return  Row(
       children: [
-        const Text(
-          "H & M",
-          style: TextStyle(
-            color: Color(0xFF00A86B),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        Text(brandName.toUpperCase(), style: const TextStyle(color: Color(0xFF00A86B), fontWeight: FontWeight.bold)),
         const SizedBox(width: 10),
-        const Text(
-          "ELECTRONICS",
-          style: TextStyle(
-            color: Colors.grey,
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-          ),
-        ),
+        Text(categoryName.toUpperCase(), style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12)),
         const Spacer(),
-        _badge("-55% OFF"),
-        const SizedBox(width: 8),
-        _badge("SALE", icon: Icons.local_fire_department),
+        if (discount != null && discount != "0") _badge("৳$discount OFF"),
       ],
     );
   }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ProductImageSection extends StatelessWidget {
-  const ProductImageSection({super.key});
+  final String image;
+  const ProductImageSection({super.key, required this.image});
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -12,7 +13,7 @@ class ProductImageSection extends StatelessWidget {
             width: double.infinity,
             height: 350,
             color: Colors.grey.shade200,
-            child: const Icon(Icons.image, size: 100, color: Colors.grey),
+            child: Image.asset(image),
           ),
           Positioned(
             top: 20,
@@ -37,4 +38,3 @@ class ProductImageSection extends StatelessWidget {
     );
   }
 }
-

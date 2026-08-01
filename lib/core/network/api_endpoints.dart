@@ -8,5 +8,6 @@ class ApiEndpoints {
    static const String resetPass = 'api/auth/reset-password';
    //products
    static const String publicProducts = 'api/public/products';
-
+   static String productsDetails(String slug) =>
+       'api/public/product/${slug}';
 }
