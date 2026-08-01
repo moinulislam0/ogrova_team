@@ -6,5 +6,7 @@ class ApiEndpoints {
    static const String findAccount = 'api/auth/find-account';
    static const String resetOtp = 'api/auth/verify-otp';
    static const String resetPass = 'api/auth/reset-password';
+   //products
+   static const String publicProducts = 'api/public/products';
 
 }
