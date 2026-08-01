@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrova_team/presentation/auth/login_screen/viewModel/signIn_view_model.dart';
 import 'package:ogrova_team/presentation/main_screen/view/screen/main_screen.dart';
+import 'package:ogrova_team/presentation/register_screen/view/screen/register_screen.dart';
 
 import '../../../../core/resource/constant/color_manager.dart';
 import '../../../../core/resource/constant/image_manager.dart';
@@ -70,7 +71,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 25),
         child: Form(
-          key: _formKey, // ৪. Form wrap করা হলো
+          key: _formKey,
           child: Column(
             children: [
               const SizedBox(height: 70),
@@ -292,7 +293,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     style: TextStyle(color: Colors.grey),
                   ),
                   GestureDetector(
-                    onTap: () {}, // Navigate to Register
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RegisterScreen(),
+                        ),
+                      );
+                    }, // Navigate to Register
                     child: const Text(
                       "Register",
                       style: TextStyle(

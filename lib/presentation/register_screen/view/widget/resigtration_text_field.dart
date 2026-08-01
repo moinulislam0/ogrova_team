@@ -40,13 +40,31 @@ class RegistrationTextField extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          TextField(
+          TextFormField(
             controller: controller,
             maxLines: isPassword ? 1 : lines,
             readOnly: readOnly,
             onTap: onTap,
             keyboardType: keyboardType,
             obscureText: isPassword ? obscureText : false,
+            validator: (value) {
+              final text = value?.trim() ?? '';
+              if (text.isEmpty) return '$label is required.';
+
+              if (label == 'Password') {
+                if (text.length < 8) {
+                  return 'Password must be at least 8 characters long.';
+                }
+                if (!RegExp(r'[A-Z]').hasMatch(text) ||
+                    !RegExp(r'[a-z]').hasMatch(text)) {
+                  return 'Password needs both an uppercase and a lowercase letter.';
+                }
+                if (!RegExp(r'[^A-Za-z0-9]').hasMatch(text)) {
+                  return 'Password needs at least one symbol, such as @, #, or !.';
+                }
+              }
+              return null;
+            },
             style: const TextStyle(fontSize: 15.5, color: Color(0xFF1E293B)),
             decoration: InputDecoration(
               hintText: hint,

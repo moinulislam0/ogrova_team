@@ -78,13 +78,16 @@ class ApiClient {
         '/$endpoints',
         data: body ?? formData,
         options: Options(
-          headers: headers,
-          // Jodi FormData hoy tobe content-type automatic handle hobe
-          contentType: formData != null ? 'multipart/form-data' : 'application/json',
+          // FormData needs Dio to generate the multipart boundary itself.
+          headers: formData != null
+              ? (Map<String, String>.from(headers)..remove('Content-Type'))
+              : headers,
         ),
       );
       
       return ResposeHandle.handleResponse(response);
+    } on DioException {
+      rethrow;
     } catch (e) {
       return _handleError(e);
     }
