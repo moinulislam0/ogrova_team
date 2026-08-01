@@ -7,14 +7,17 @@ import 'package:ogrova_team/presentation/profile_screen/view/screen/profile_scre
 
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final int initialIndex;
+
+  const MainScreen({super.key, this.initialIndex = 0})
+      : assert(initialIndex >= 0 && initialIndex <= 2);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
 
@@ -27,6 +30,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.initialIndex;
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:ogrova_team/core/resource/constant/image_manager.dart';
+import 'package:ogrova_team/data/models/shopping_cart_model.dart';
 
 class CartItemCard extends StatelessWidget {
-  final Map<String, dynamic> item;
+  final CartData item;
   final VoidCallback onIncrement, onDecrement, onDelete;
+  final bool isQuantityUpdating;
 
   const CartItemCard({
     super.key,
@@ -10,15 +13,19 @@ class CartItemCard extends StatelessWidget {
     required this.onIncrement,
     required this.onDecrement,
     required this.onDelete,
+    this.isQuantityUpdating = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colors = Theme.of(context).colorScheme;
-    double totalItemPrice = (item['discountedPrice'] * item['quantity'])
-        .toDouble();
-    int totalItemPoints = item['pointsPerUnit'] * item['quantity'];
+
+    // ইমেজ হ্যান্ডেলিং
+    String? imageUrl =
+        (item.product?.images != null && item.product!.images!.isNotEmpty)
+        ? item.product!.images![0].toString()
+        : null;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -26,21 +33,31 @@ class CartItemCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isDark ? Colors.white : Colors.grey),
+        border: Border.all(
+          color: isDark ? Colors.white38 : Colors.grey.shade300,
+        ),
       ),
       child: Column(
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // প্রোডাক্ট ইমেজ
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  item['imageUrl'],
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.contain,
-                ),
+                child: imageUrl != null && imageUrl.startsWith('http')
+                    ? Image.network(
+                        imageUrl,
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Image.asset(
+                          ImageManager.products,
+                          width: 80,
+                          height: 80,
+                        ),
+                      )
+                    : Image.asset(ImageManager.products, width: 80, height: 80),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -50,12 +67,16 @@ class CartItemCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          item['name'],
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: colors.onSurface,
+                        Expanded(
+                          child: Text(
+                            item.product?.name ?? "Unknown Product",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: colors.onSurface,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         GestureDetector(
@@ -69,6 +90,7 @@ class CartItemCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 5),
+                    // সেভড অ্যামাউন্ট
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
@@ -79,7 +101,7 @@ class CartItemCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Text(
-                        "Saved ৳${item['savedAmount']}",
+                        "Saved ৳${item.discount ?? '0'}",
                         style: const TextStyle(
                           color: Colors.green,
                           fontSize: 10,
@@ -88,11 +110,21 @@ class CartItemCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
+                    // ভেরিয়েন্ট ব্যাজ
                     Row(
                       children: [
-                        _variantBadge(item['color'], Colors.red, isColor: true),
+                        if (item.variant?.color != null)
+                          _variantBadge(
+                            item.variant!.color!,
+                            Colors.red,
+                            isColor: true,
+                          ),
                         const SizedBox(width: 8),
-                        _variantBadge("SIZE: ${item['size']}", Colors.green),
+                        if (item.variant?.size != null)
+                          _variantBadge(
+                            "SIZE: ${item.variant!.size}",
+                            Colors.blue,
+                          ),
                       ],
                     ),
                   ],
@@ -103,35 +135,38 @@ class CartItemCard extends StatelessWidget {
           const SizedBox(height: 15),
           const Divider(),
           const SizedBox(height: 10),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // কোয়ান্টিটি বাটন (প্লাস-মাইনাস)
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: isDark ? Colors.white : Colors.grey,
+                    color: isDark ? Colors.white54 : Colors.grey.shade400,
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
                   children: [
-                    _qtyBtn(Icons.remove, onDecrement),
+                    _qtyBtn(
+                      Icons.remove,
+                      isQuantityUpdating ? null : onDecrement,
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Text(
-                        "${item['quantity']}",
+                        "${item.quantity ?? 0}",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: colors.onSurface,
                         ),
                       ),
                     ),
-                    _qtyBtn(Icons.add, onIncrement),
+                    _qtyBtn(Icons.add, isQuantityUpdating ? null : onIncrement),
                   ],
                 ),
               ),
-
+              // পয়েন্ট বক্স
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
@@ -157,7 +192,7 @@ class CartItemCard extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      "$totalItemPoints PTS",
+                      "${item.point ?? 0} PTS",
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -167,27 +202,19 @@ class CartItemCard extends StatelessWidget {
                   ],
                 ),
               ),
-              // প্রাইস
+              // প্রাইস সেকশন
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "UNIT: ৳${item['unitPrice']}",
+                    "UNIT: ৳${item.price ?? '0'}",
                     style: TextStyle(
                       fontSize: 11,
                       color: colors.onSurfaceVariant,
                     ),
                   ),
                   Text(
-                    "৳485.00",
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: colors.onSurfaceVariant,
-                      decoration: TextDecoration.lineThrough,
-                    ),
-                  ),
-                  Text(
-                    "৳${totalItemPrice.toStringAsFixed(0)}",
+                    "৳${item.payableAmount ?? '0'}",
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -227,11 +254,12 @@ class CartItemCard extends StatelessWidget {
     );
   }
 
-  Widget _qtyBtn(IconData icon, VoidCallback onTap) {
+  Widget _qtyBtn(IconData icon, VoidCallback? onTap) {
     return IconButton(
       onPressed: onTap,
       icon: Icon(icon, size: 16),
       constraints: const BoxConstraints(),
+      padding: const EdgeInsets.all(8),
     );
   }
 }

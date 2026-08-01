@@ -24,9 +24,13 @@ class _BillingAddressState extends State<BillingAddress> {
         scrolledUnderElevation: 0,
         title: Text(
           "Checkout",
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0.5,
         leading: BackButton(color: Theme.of(context).colorScheme.onSurface),
       ),
@@ -47,7 +51,9 @@ class _BillingAddressState extends State<BillingAddress> {
                   TextSpan(text: "Billing "),
                   TextSpan(
                     text: "Address",
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                 ],
               ),

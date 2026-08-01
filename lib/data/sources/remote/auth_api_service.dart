@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:ogrova_team/core/network/api_clients.dart';
 import 'package:ogrova_team/core/network/api_endpoints.dart';
 import 'package:ogrova_team/data/sources/local/shared_preference/shared_prefenrence.dart';
@@ -79,6 +80,10 @@ class AuthApiService {
           final token = response['token']?.toString().trim() ?? "";
           if (token.isEmpty) {
             throw Exception('Login succeeded but no access token was returned.');
+          }
+
+          if (kDebugMode) {
+            debugPrint('Login authentication response: $response');
           }
 
           // Store only the token value. ApiClient owns Authorization formatting.

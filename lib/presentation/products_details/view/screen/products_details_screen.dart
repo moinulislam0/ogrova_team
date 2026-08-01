@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrova_team/core/resource/constant/image_manager.dart';
 import 'package:ogrova_team/data/sources/local/shared_preference/shared_prefenrence.dart';
-import 'package:ogrova_team/presentation/add_to-cart/view/screen/add_to_cart_screen.dart';
 import 'package:ogrova_team/presentation/auth/login_screen/view/login_screen.dart';
-
+import 'package:ogrova_team/presentation/main_screen/view/screen/main_screen.dart';
 import 'package:ogrova_team/presentation/products_details/view/widget/action_button_widget.dart';
 import 'package:ogrova_team/presentation/products_details/view/widget/brand_badge_widget.dart';
 import 'package:ogrova_team/presentation/products_details/view/widget/delivery_info_widget.dart';
@@ -38,9 +37,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     });
   }
 
-  
   Future<void> _handleAddToCart() async {
-    
     final token = await SharedPreferenceData.getToken();
 
     if (token == null || token.isEmpty) {
@@ -48,23 +45,24 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Please login to add items to cart!")),
         );
-      
-         Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
       }
       return;
     }
 
-    
     final product = ref.read(productDetailsProvider).data?.data;
     if (product == null) return;
 
     final int productId = product.id ?? 0;
-   
+
     final int variantId =
         (product.variants != null && product.variants!.isNotEmpty)
         ? (product.variants![selectedVariantIndex].id ?? 0)
         : 0;
-
 
     final success = await ref
         .read(addToCardProvider.notifier)
@@ -74,15 +72,14 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           quantity: quantity,
         );
 
-   
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Added to cart successfully!")),
       );
-   
+
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const ShoppingCartScreen()),
+        MaterialPageRoute(builder: (context) => MainScreen(initialIndex: 1)),
       );
     } else if (mounted) {
       final error = ref.read(addToCardProvider).errorMessage;
@@ -90,6 +87,55 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         context,
       ).showSnackBar(SnackBar(content: Text(error ?? "Failed to add to cart")));
     }
+  }
+
+  Future<void> _handleBuyNow() async {
+    final token = await SharedPreferenceData.getToken();
+
+    if (!mounted) return;
+
+    if (token == null || token.trim().isEmpty) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+      return;
+    }
+
+    final product = ref.read(productDetailsProvider).data?.data;
+    if (product == null) return;
+
+    final productId = product.id ?? 0;
+    final variantId = product.variants != null && product.variants!.isNotEmpty
+        ? (product.variants![selectedVariantIndex].id ?? 0)
+        : 0;
+
+    final added = await ref
+        .read(addToCardProvider.notifier)
+        .addToCart(
+          productId: productId,
+          variantId: variantId,
+          quantity: quantity,
+        );
+
+    if (!mounted) return;
+    if (!added) {
+      final error = ref.read(addToCardProvider).errorMessage;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error ?? 'Unable to add this item to your cart.'),
+        ),
+      );
+      return;
+    }
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MainScreen(initialIndex: 1),
+      ),
+      (route) => false,
+    );
   }
 
   @override
@@ -111,7 +157,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
       return const Scaffold(body: Center(child: Text("No product found")));
     }
 
-  
     double currentBasePrice = double.tryParse(product.price ?? "0") ?? 0.0;
     double currentOldPrice =
         currentBasePrice + (double.tryParse(product.discount ?? "0") ?? 0.0);
@@ -127,7 +172,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     double totalPrice = currentBasePrice * quantity;
     double totalOldPrice = currentOldPrice * quantity;
 
-   
     List<dynamic> images = product.images != null && product.images!.isNotEmpty
         ? product.images!
         : [ImageManager.products];
@@ -263,7 +307,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   }
 
   Widget _buildBottomBar(BuildContext context) {
-    // Add to cart এর লোডিং স্টেট চেক করা
     final cartState = ref.watch(addToCardProvider);
 
     return Container(
@@ -319,8 +362,12 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           ),
           const SizedBox(height: 10),
           ActionButton(
-            ontap: () {},
-            label: "BUY NOW",
+            ontap: () {
+              if (!cartState.isLoading) {
+                _handleBuyNow();
+              }
+            },
+            label: cartState.isLoading ? "ADDING..." : "BUY NOW",
             icon: Icons.flash_on,
             isPrimary: true,
           ),

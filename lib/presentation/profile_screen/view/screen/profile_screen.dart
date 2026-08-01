@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ogrova_team/core/network/api_clients.dart';
+import 'package:ogrova_team/core/network/api_endpoints.dart';
+import 'package:ogrova_team/data/sources/local/shared_preference/shared_prefenrence.dart';
 import 'package:ogrova_team/presentation/auth/login_screen/view/login_screen.dart';
 import 'package:ogrova_team/presentation/home/view/widget/section_header.dart';
 import 'package:ogrova_team/presentation/profile_screen/view/widget/about_screen.dart';
@@ -28,6 +31,24 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  Future<void> _logout() async {
+    try {
+      await ApiClient().postRequest(endpoints: ApiEndpoints.logout);
+    } catch (_) {
+    } finally {
+      
+      await SharedPreferenceData.removeToken();
+      await ApiClient.headerSet();
+
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        (route) => false,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -231,12 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: "LogOut",
                     iconBg: CupertinoColors.destructiveRed,
                     iconColor: const Color(0xFF475569),
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const LoginScreen()),
-                      );
-                    },
+                    onTap: _logout,
                   ),
                 ],
               ),
