@@ -22,4 +22,18 @@ class ShoppingCartRepository {
       quantity: quantity,
     );
   }
+
+  Future<bool> deleteCart({
+    required int cartId,
+    required String reg,
+    required int productId,
+    required int variantId,
+  }) {
+    return resource.deleteCart(
+      cartId: cartId,
+      reg: reg,
+      productId: productId,
+      variantId: variantId,
+    );
+  }
 }

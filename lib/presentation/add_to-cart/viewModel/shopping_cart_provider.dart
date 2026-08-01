@@ -118,6 +118,47 @@ class ShoppingCartProvider extends StateNotifier<ShoppingCartState> {
     }
   }
 
+  Future<bool> deleteItem(CartData item) async {
+    final cartId = item.id;
+    final reg = item.reg;
+    final productId = item.productId;
+    final variantId = item.variantId;
+    if (cartId == null || reg == null || productId == null || variantId == null) {
+      state = state.copyWith(errorMessage: 'Unable to remove this cart item.');
+      return false;
+    }
+
+    final itemKey = _itemKey(item);
+    final previousData = state.data;
+    state = state.copyWith(
+      data: _cartWithout(itemKey),
+      updatingItemKeys: {...state.updatingItemKeys, itemKey},
+      clearErrorMessage: true,
+    );
+
+    try {
+      final deleted = await remote.deleteCart(
+        cartId: cartId,
+        reg: reg,
+        productId: productId,
+        variantId: variantId,
+      );
+      if (!deleted) throw Exception('Could not remove this cart item.');
+
+      state = state.copyWith(
+        updatingItemKeys: {...state.updatingItemKeys}..remove(itemKey),
+      );
+      return true;
+    } catch (e) {
+      state = state.copyWith(
+        data: previousData,
+        updatingItemKeys: {...state.updatingItemKeys}..remove(itemKey),
+        errorMessage: e.toString().replaceFirst('Exception: ', ''),
+      );
+      return false;
+    }
+  }
+
   String itemKey(CartData item) => _itemKey(item);
 
   String _itemKey(CartData item) =>
@@ -136,6 +177,15 @@ class ShoppingCartProvider extends StateNotifier<ShoppingCartState> {
         break;
       }
     }
+    return copied;
+  }
+
+  ShoppingCartModel? _cartWithout(String itemKey) {
+    final cart = state.data;
+    if (cart == null) return null;
+
+    final copied = ShoppingCartModel.fromJson(cart.toJson());
+    copied.data?.removeWhere((cartItem) => _itemKey(cartItem) == itemKey);
     return copied;
   }
 }

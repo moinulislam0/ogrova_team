@@ -15,7 +15,7 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
   @override
   void initState() {
     super.initState();
- 
+
     Future.delayed(Duration.zero, () {
       ref.read(shoppingCartProvider.notifier).getCartData();
     });
@@ -26,7 +26,6 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
     final state = ref.watch(shoppingCartProvider);
     final cartItems = state.data?.data ?? [];
 
-   
     double subtotal = 0;
     int totalPoints = 0;
     for (var item in cartItems) {
@@ -35,15 +34,14 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA), 
+      backgroundColor: const Color(0xFFF8F9FA),
       body: Column(
         children: [
-        
           Container(
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
             decoration: const BoxDecoration(
-              color: Color(0xFF00A86B), 
+              color: Color(0xFF00A86B),
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(0),
                 bottomRight: Radius.circular(0),
@@ -59,111 +57,125 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
             ),
           ),
 
-
           Expanded(
             child: state.isLoading && cartItems.isEmpty
                 ? const Center(child: CircularProgressIndicator())
                 : state.errorMessage != null
-                    ? Center(child: Text(state.errorMessage!))
-                    : cartItems.isEmpty
-                        ? const Center(child: Text("Your cart is empty"))
-                        : RefreshIndicator(
-                            onRefresh: () => ref.read(shoppingCartProvider.notifier).getCartData(),
-                            child: SingleChildScrollView(
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: Column(
-                                children: [
-                                  const SizedBox(height: 20),
-                                  
-                                 
-                                  Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.all(15),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.05),
-                                          blurRadius: 10,
-                                        )
-                                      ],
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        const Text(
-                                          "Total Items: ",
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                        ),
-                                        Text(
-                                          "${cartItems.length}",
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold, 
-                                            fontSize: 16,
-                                            color: Color(0xFF00A86B),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                ? Center(child: Text(state.errorMessage!))
+                : cartItems.isEmpty
+                ? const Center(child: Text("Your cart is empty"))
+                : RefreshIndicator(
+                    onRefresh: () =>
+                        ref.read(shoppingCartProvider.notifier).getCartData(),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20),
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 10,
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                const Text(
+                                  "Total Items: ",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
                                   ),
-                                  const SizedBox(height: 20),
-
-                                
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    itemCount: cartItems.length,
-                                    itemBuilder: (context, index) {
-                                      final cartData = cartItems[index];
-                                      return CartItemCard(
-                                        item: cartData,
-                                        isQuantityUpdating: state.updatingItemKeys.contains(
-                                          ref
-                                              .read(shoppingCartProvider.notifier)
-                                              .itemKey(cartData),
-                                        ),
-                                        onIncrement: () {
-                                          final currentQty = cartData.quantity ?? 1;
-                                          ref
-                                              .read(shoppingCartProvider.notifier)
-                                              .updateQuantity(
-                                                item: cartData,
-                                                quantity: currentQty + 1,
-                                              );
-                                        },
-                                        onDecrement: () {
-                                          final currentQty = cartData.quantity ?? 1;
-                                          if (currentQty > 1) {
-                                            ref
-                                                .read(shoppingCartProvider.notifier)
-                                                .updateQuantity(
-                                                  item: cartData,
-                                                  quantity: currentQty - 1,
-                                                );
-                                          }
-                                        },
-                                        onDelete: () {
-                                          // // ডিলিট এপিআই কল
-                                          // ref.read(shoppingCartProvider.notifier)
-                                          //    .deleteItem(cartData.id!);
-                                        },
-                                      );
-                                    },
+                                ),
+                                Text(
+                                  "${cartItems.length}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Color(0xFF00A86B),
                                   ),
-                                  const SizedBox(height: 20),
-
-                                 
-                                  OrderSummaryCard(
-                                    subtotal: subtotal, 
-                                    points: totalPoints
-                                  ),
-                                  const SizedBox(height: 40),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
+                          SizedBox(height: 15),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            // Nested ListView adds top safe-area padding by
+                            // default. Remove it so the first item sits right
+                            // below the "Total Items" card.
+                            padding: EdgeInsets.zero,
+                            itemCount: cartItems.length,
+                            itemBuilder: (context, index) {
+                              final cartData = cartItems[index];
+                              return CartItemCard(
+                                item: cartData,
+                                isQuantityUpdating: state.updatingItemKeys
+                                    .contains(
+                                      ref
+                                          .read(shoppingCartProvider.notifier)
+                                          .itemKey(cartData),
+                                    ),
+                                onIncrement: () {
+                                  final currentQty = cartData.quantity ?? 1;
+                                  ref
+                                      .read(shoppingCartProvider.notifier)
+                                      .updateQuantity(
+                                        item: cartData,
+                                        quantity: currentQty + 1,
+                                      );
+                                },
+                                onDecrement: () {
+                                  final currentQty = cartData.quantity ?? 1;
+                                  if (currentQty > 1) {
+                                    ref
+                                        .read(shoppingCartProvider.notifier)
+                                        .updateQuantity(
+                                          item: cartData,
+                                          quantity: currentQty - 1,
+                                        );
+                                  }
+                                },
+                                onDelete: () {
+                                  ref
+                                      .read(shoppingCartProvider.notifier)
+                                      .deleteItem(cartData);
+                                 
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
+                    ),
+                  ),
           ),
+
+          if (cartItems.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, -5),
+                  ),
+                ],
+              ),
+              child: OrderSummaryCard(subtotal: subtotal, points: totalPoints),
+            ),
         ],
       ),
     );

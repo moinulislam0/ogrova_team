@@ -21,7 +21,6 @@ class CartItemCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colors = Theme.of(context).colorScheme;
 
-    // ইমেজ হ্যান্ডেলিং
     String? imageUrl =
         (item.product?.images != null && item.product!.images!.isNotEmpty)
         ? item.product!.images![0].toString()
@@ -42,7 +41,7 @@ class CartItemCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // প্রোডাক্ট ইমেজ
+           
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: imageUrl != null && imageUrl.startsWith('http')
@@ -90,7 +89,7 @@ class CartItemCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 5),
-                    // সেভড অ্যামাউন্ট
+                  
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
@@ -110,7 +109,7 @@ class CartItemCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    // ভেরিয়েন্ট ব্যাজ
+                   
                     Row(
                       children: [
                         if (item.variant?.color != null)
@@ -138,7 +137,7 @@ class CartItemCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // কোয়ান্টিটি বাটন (প্লাস-মাইনাস)
+             
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(

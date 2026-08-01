@@ -37,4 +37,16 @@ class ShoppingCartApiService {
     // quantity update response from the backend.
     return response is Map;
   }
+
+  Future<bool> deleteCart({
+    required int cartId,
+    required String reg,
+    required int productId,
+    required int variantId,
+  }) async {
+    final response = await apiClient.postRequest(
+      endpoints: ApiEndpoints.deleteCart(cartId, reg, productId, variantId),
+    );
+    return response is Map;
+  }
 }
