@@ -1,24 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; 
 import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 import 'package:ogrova_team/core/resource/constant/image_manager.dart';
+
+import 'package:ogrova_team/presentation/auth/reset_password/viewModel/reset_password_Provider.dart';
 import 'package:ogrova_team/presentation/auth/welcome_screen/view/welcome_screen.dart';
 
-class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key});
+class ResetPasswordScreen extends ConsumerStatefulWidget { 
+  final String email;
+  const ResetPasswordScreen({super.key, required this.email});
 
   @override
-  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
+  ConsumerState<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
+
+  final TextEditingController _passController = TextEditingController();
+  final TextEditingController _confirmPassController = TextEditingController();
   bool _isNewPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
   @override
+  void dispose() {
+    _passController.dispose();
+    _confirmPassController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+   
+    final state = ref.watch(resetPassProvider);
+    final notifier = ref.read(resetPassProvider.notifier);
+
     return Scaffold(
       backgroundColor: Colors.white,
-
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -71,6 +88,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             ),
             const SizedBox(height: 8),
             TextFormField(
+              controller: _passController, 
               obscureText: !_isNewPasswordVisible,
               decoration: InputDecoration(
                 hintText: "••••••••",
@@ -123,6 +141,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             ),
             const SizedBox(height: 8),
             TextFormField(
+              controller: _confirmPassController, 
               obscureText: !_isConfirmPasswordVisible,
               decoration: InputDecoration(
                 hintText: "••••••••",
@@ -166,32 +185,59 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               width: double.infinity,
               height: 55,
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => WelcomeSuccessScreen(),
-                    ),
+                onPressed: state.isloading ? null : () async {
+                 
+                  String pass = _passController.text.trim();
+                  String cPass = _confirmPassController.text.trim();
+
+                  if (pass.isEmpty || cPass.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please fill all fields")));
+                    return;
+                  }
+                  if (pass != cPass) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Passwords do not match")));
+                    return;
+                  }
+
+                  final success = await notifier.resetPass(
+                    email: widget.email,
+                    pass: pass,
+                    cPass: cPass,
                   );
+
+                  if (success) {
+                    if (context.mounted) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const WelcomeSuccessScreen()),
+                      );
+                    }
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage ?? "Error occurred")));
+                    }
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ColorManager.primary,
+                  disabledBackgroundColor: ColorManager.primary.withOpacity(0.5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  "UPDATE PASSWORD",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
+                child: state.isloading 
+                    ? const CircularProgressIndicator(color: Colors.white) 
+                    : const Text(
+                        "UPDATE PASSWORD",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
               ),
             ),
             const SizedBox(height: 35),
-
             const SizedBox(height: 40),
           ],
         ),

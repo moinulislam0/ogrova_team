@@ -1,13 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:ogrova_team/core/resource/constant/color_manager.dart'; // Primary color এর জন্য
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 import 'package:ogrova_team/core/resource/constant/image_manager.dart';
+import 'package:ogrova_team/presentation/auth/forgot_screen/ViewModel/forgot_password_provider.dart';
 import 'package:ogrova_team/presentation/auth/otp_screen/view/screen/otp_screen.dart';
 
-class ForgotScreen extends StatelessWidget {
+class ForgotScreen extends ConsumerStatefulWidget {
   const ForgotScreen({super.key});
 
   @override
+  ConsumerState<ForgotScreen> createState() => _ForgotScreenState();
+}
+
+class _ForgotScreenState extends ConsumerState<ForgotScreen> {
+ 
+  late final TextEditingController emailController;
+  bool isLoading = false; 
+
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+   
+    emailController.dispose();
+    super.dispose();
+  }
+
+ 
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+  }
+
+  @override
   Widget build(BuildContext context) {
+ 
+    final forgotProvider = ref.read(forgotpasswordProvider.notifier);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -18,7 +50,6 @@ class ForgotScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(30),
-
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.1),
@@ -85,18 +116,13 @@ class ForgotScreen extends StatelessWidget {
                 const SizedBox(height: 10),
 
                 TextField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
                   style: const TextStyle(color: Colors.black87),
                   decoration: InputDecoration(
                     hintText: "you@example.com",
-                    hintStyle: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14,
-                    ),
-                    prefixIcon: const Icon(
-                      Icons.email_outlined,
-                      color: Colors.grey,
-                      size: 20,
-                    ),
+                    hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+                    prefixIcon: const Icon(Icons.email_outlined, color: Colors.grey, size: 20),
                     filled: true,
                     fillColor: const Color(0xFFF8FAFC),
                     border: OutlineInputBorder(
@@ -120,29 +146,69 @@ class ForgotScreen extends StatelessWidget {
                   width: double.infinity,
                   height: 55,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const OtpScreen(),
-                        ),
-                      );
+                    onPressed: isLoading ? null : () async {
+                      String email = emailController.text.trim();
+
+                      
+                      if (email.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Please enter your email")),
+                        );
+                        return;
+                      }
+                      if (!_isValidEmail(email)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Please enter a valid email")),
+                        );
+                        return;
+                      }
+
+                    
+                      setState(() => isLoading = true);
+
+                    
+                      final success = await forgotProvider.findAccount(email: email);
+
+                    
+                      setState(() => isLoading = false);
+
+                      if (success) {
+                       
+                        if (mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => OtpScreen(email: email), 
+                            ),
+                          );
+                        }
+                      } else {
+                        
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Account not found or something went wrong!")),
+                          );
+                        }
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorManager.primary,
+                      disabledBackgroundColor: ColorManager.primary.withOpacity(0.6),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      "FIND ACCOUNT",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
+                    child: isLoading 
+                      ?  CircularProgressIndicator(color: ColorManager.primary) 
+                      : const Text(
+                          "FIND ACCOUNT",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
                   ),
                 ),
                 const SizedBox(height: 25),

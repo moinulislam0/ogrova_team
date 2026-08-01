@@ -44,5 +44,14 @@ class AuthRepository {
       photo: photo,
     );
   }
-}
 
+  Future<bool> findAccount({required String email}) async {
+    return remoteSource.findAccount(email: email);
+  }
+  Future<bool> resentOtp({required String email,required String otp}) async {
+    return remoteSource.resetOtp(email: email,otp: otp);
+  }
+  Future<bool> resentPass({required String email,required String pass,required String cPass}) async {
+    return remoteSource.resetPass(email: email,pass: pass,cPass: cPass);
+  }
+}

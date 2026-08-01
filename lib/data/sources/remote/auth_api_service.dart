@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'dart:developer' as developer;
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:ogrova_team/core/network/api_clients.dart';
@@ -58,7 +58,6 @@ class AuthApiService {
       return false;
     } catch (e) {
       rethrow;
-
     }
   }
 
@@ -68,11 +67,7 @@ class AuthApiService {
     required bool remember,
   }) async {
     try {
-      final body = {
-        "email": email,
-        "password": password,
-        "remember": remember,
-      };
+      final body = {"email": email, "password": password, "remember": remember};
 
       final dynamic response = await apiClient.postRequest(
         body: body,
@@ -90,8 +85,7 @@ class AuthApiService {
           developer.log("Login Failed: ${response['message']}");
           throw Exception(response['message'] ?? 'Unable to sign in.');
         }
-      }
-      else if (response is List && response.isNotEmpty) {
+      } else if (response is List && response.isNotEmpty) {
         developer.log("Warning: API returned a List instead of a Map");
         final data = response[0]; // Prothom element nite hobe
         if (data['success'] == true) {
@@ -112,5 +106,99 @@ class AuthApiService {
       developer.log("General Error: $error");
       rethrow;
     }
+  }
+
+  Future<bool> findAccount({required String email}) async {
+    try {
+      final body = {"email": email};
+      final response = await apiClient.postRequest(
+        endpoints: ApiEndpoints.findAccount,
+        body: body,
+      );
+
+      if (response is Map &&
+          (response['success'] == true || response['user'] is Map)) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> resetOtp({required String email, required String otp}) async {
+    try {
+      final body = {"email": email, 'otp': otp};
+      final response = await apiClient.postRequest(
+        endpoints: ApiEndpoints.resetOtp,
+        body: body,
+      );
+      if (response is Map &&
+          (response['success'] == true || response['user'] is Map)) {
+        return true;
+      }
+      return false;
+    } on DioException catch (e) {
+      throw Exception(
+        _friendlyDioMessage(
+          e,
+          fallback: 'The verification code is invalid or has expired.',
+        ),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> resetPass({
+    required String email,
+    required String pass,
+    required String cPass,
+  }) async {
+    try {
+      final body = {
+        "email": email,
+        'password': pass,
+        "password_confirmation": cPass,
+      };
+      final response = await apiClient.postRequest(
+        endpoints: ApiEndpoints.resetPass,
+        body: body,
+      );
+      // This endpoint returns a success message instead of `success: true`.
+      final message = response is Map ? response['message']?.toString() : null;
+      if (response is Map &&
+          (response['success'] == true ||
+              (message?.toLowerCase().contains('password reset successful') ??
+                  false))) {
+        return true;
+      }
+      return false;
+    } on DioException catch (e) {
+      throw Exception(
+        _friendlyDioMessage(
+          e,
+          fallback: 'Unable to reset your password. Please try again.',
+        ),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  String _friendlyDioMessage(DioException error, {required String fallback}) {
+    final data = error.response?.data;
+    if (data is Map) {
+      if (data['message'] != null) return data['message'].toString();
+
+      final errors = data['errors'];
+      if (errors is Map) {
+        for (final value in errors.values) {
+          if (value is List && value.isNotEmpty) return value.first.toString();
+          if (value != null) return value.toString();
+        }
+      }
+    }
+    return fallback;
   }
 }

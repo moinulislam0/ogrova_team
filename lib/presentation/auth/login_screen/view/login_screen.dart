@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ogrova_team/presentation/auth/forgot_screen/view/screen/forgot_screen.dart';
 import 'package:ogrova_team/presentation/auth/login_screen/viewModel/signIn_view_model.dart';
 import 'package:ogrova_team/presentation/main_screen/view/screen/main_screen.dart';
 import 'package:ogrova_team/presentation/register_screen/view/screen/register_screen.dart';
@@ -230,7 +231,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ],
                   ),
                   TextButton(
-                    onPressed: () {}, // Navigate to Forgot Password
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ForgotScreen()),
+                      );
+                    }, // Navigate to Forgot Password
                     child: const Text(
                       "Forgot Password?",
                       style: TextStyle(
