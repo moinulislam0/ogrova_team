@@ -4,9 +4,20 @@ import '../../../../data/repositories/auth_repository.dart';
 import '../../../../data/sources/remote/auth_api_service.dart';
 class SignInState {
   final bool isLoading;
-  SignInState({required this.isLoading});
-  SignInState copyWith({bool? isLoading}) {
-    return SignInState(isLoading: isLoading ?? this.isLoading);
+  final String? errorMessage;
+
+  SignInState({required this.isLoading, this.errorMessage});
+
+  SignInState copyWith({
+    bool? isLoading,
+    String? errorMessage,
+    bool clearErrorMessage = false,
+  }) {
+    return SignInState(
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage:
+          clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
+    );
   }
 }
 
@@ -14,8 +25,27 @@ class SignInModelview extends StateNotifier<SignInState> {
   final AuthRepository repository;
   SignInModelview({required this.repository})
     : super(SignInState(isLoading: false));
-  Future<bool> signIn({required String email, required String password}) async {
-    return await repository.login(email: email, password: password);
+  Future<bool> signIn({
+    required String email,
+    required String password,
+    required bool remember,
+  }) async {
+    state = state.copyWith(isLoading: true, clearErrorMessage: true);
+    try {
+      final success = await repository.login(
+        email: email,
+        password: password,
+        remember: remember,
+      );
+      state = state.copyWith(isLoading: false);
+      return success;
+    } catch (error) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: error.toString().replaceFirst('Exception: ', ''),
+      );
+      return false;
+    }
   }
 
   void isLoading() {

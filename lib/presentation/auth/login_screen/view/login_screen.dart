@@ -19,6 +19,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscureText = true;
+  bool _rememberMe = true;
 
   @override
   void dispose() {
@@ -34,6 +35,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       bool success = await viewModel.signIn(
         email: _emailController.text.trim(),
         password: _passwordController.text,
+        remember: _rememberMe,
       );
 
       if (success) {
@@ -52,8 +54,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Login Failed! Please check creadential"),
+            SnackBar(
+              content: Text(
+                ref.read(signInViewModelProvider).errorMessage ??
+                    "Login Failed! Please check credentials.",
+              ),
               backgroundColor: Colors.red,
             ),
           );
@@ -210,9 +215,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         height: 24,
                         width: 24,
                         child: Checkbox(
-                          value: true,
+                          value: _rememberMe,
                           activeColor: const Color(0xFF00A86B),
-                          onChanged: (v) {},
+                          onChanged: (value) {
+                            setState(() => _rememberMe = value ?? false);
+                          },
                         ),
                       ),
                       const SizedBox(width: 8),

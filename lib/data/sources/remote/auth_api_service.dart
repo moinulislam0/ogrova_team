@@ -62,16 +62,23 @@ class AuthApiService {
     }
   }
 
-  Future<bool> login({required String email, required String password}) async {
+  Future<bool> login({
+    required String email,
+    required String password,
+    required bool remember,
+  }) async {
     try {
-      final body = {"email": email, "password": password};
+      final body = {
+        "email": email,
+        "password": password,
+        "remember": remember,
+      };
 
       final dynamic response = await apiClient.postRequest(
         body: body,
         endpoints: ApiEndpoints.login,
       );
 
-      // Ekhane check kora hocche response ki Map naki List
       if (response != null && response is Map<String, dynamic>) {
         if (response['success'] == true) {
           String tokenType = response['token_type'] ?? 'Bearer';
@@ -81,10 +88,9 @@ class AuthApiService {
           return true;
         } else {
           developer.log("Login Failed: ${response['message']}");
-          return false;
+          throw Exception(response['message'] ?? 'Unable to sign in.');
         }
       }
-      // Jodi backend theke List ashe (bhul vabe)
       else if (response is List && response.isNotEmpty) {
         developer.log("Warning: API returned a List instead of a Map");
         final data = response[0]; // Prothom element nite hobe
@@ -97,7 +103,11 @@ class AuthApiService {
       return false;
     } on DioException catch (e) {
       developer.log("Dio Error: ${e.response?.data}");
-      rethrow;
+      final responseData = e.response?.data;
+      final message = responseData is Map && responseData['message'] != null
+          ? responseData['message'].toString()
+          : 'Unable to sign in. Please try again.';
+      throw Exception(message);
     } catch (error) {
       developer.log("General Error: $error");
       rethrow;
