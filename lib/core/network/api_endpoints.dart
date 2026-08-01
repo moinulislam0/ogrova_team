@@ -10,4 +10,5 @@ class ApiEndpoints {
    static const String publicProducts = 'api/public/products';
    static String productsDetails(String slug) =>
        'api/public/product/${slug}';
+   static const String addToCart = 'api/cart/add-to-cart';
 }

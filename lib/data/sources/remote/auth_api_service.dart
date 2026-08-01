@@ -76,10 +76,14 @@ class AuthApiService {
 
       if (response != null && response is Map<String, dynamic>) {
         if (response['success'] == true) {
-          String tokenType = response['token_type'] ?? 'Bearer';
-          String token = response['token'] ?? "";
+          final token = response['token']?.toString().trim() ?? "";
+          if (token.isEmpty) {
+            throw Exception('Login succeeded but no access token was returned.');
+          }
 
-          await SharedPreferenceData.setToken("$tokenType $token");
+          // Store only the token value. ApiClient owns Authorization formatting.
+          await SharedPreferenceData.setToken(token);
+          await ApiClient.headerSet(token);
           return true;
         } else {
           developer.log("Login Failed: ${response['message']}");

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ogrova_team/data/sources/local/shared_preference/shared_prefenrence.dart';
 import 'package:ogrova_team/presentation/add_to-cart/view/screen/add_to_cart_screen.dart';
+import 'package:ogrova_team/presentation/auth/login_screen/view/login_screen.dart';
 import 'package:ogrova_team/presentation/home/view/sreen/home_screen.dart';
 import 'package:ogrova_team/presentation/profile_screen/view/screen/profile_screen.dart';
+
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -40,8 +43,26 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void _onItemTapped(int index) {
+  
+  Future<void> _onItemTapped(int index) async {
     if (_selectedIndex == index) return;
+
+ 
+    if (index == 1) {
+      final token = await SharedPreferenceData.getToken();
+      
+      if (token == null || token.isEmpty) {
+        
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+        }
+        return; 
+      }
+    }
+
     setState(() {
       _selectedIndex = index;
     });
@@ -145,7 +166,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     final colors = Theme.of(context).colorScheme;
 
     return GestureDetector(
-      onTap: () => _onItemTapped(index),
+      onTap: () => _onItemTapped(index), 
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 280),
@@ -156,7 +177,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ),
         decoration: BoxDecoration(
           color: isSelected
-              ? colors.secondary.withValues(alpha: 0.12)
+              ? colors.secondary.withOpacity(0.12)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ogrova_team/data/sources/local/shared_preference/shared_prefenrence.dart';
@@ -30,9 +29,7 @@ class ApiClient {
   /// Token set korar jonno function
   static Future<void> headerSet([String? manualToken]) async {
     final storedToken = await SharedPreferenceData.getToken();
-    String? token = manualToken ?? storedToken;
-
-    log("Token initialized: ${token ?? 'No Token Found'}");
+    final token = (manualToken ?? storedToken)?.trim();
 
     headers = {
       'Content-Type': 'application/json',
@@ -40,7 +37,13 @@ class ApiClient {
     };
 
     if (token != null && token.isNotEmpty) {
-      headers['Authorization'] = 'Bearer $token';
+      // Support tokens saved by older app versions that already included the
+      // scheme, while always sending exactly one Bearer prefix.
+      final accessToken = token.replaceFirst(
+        RegExp(r'^Bearer\s+', caseSensitive: false),
+        '',
+      );
+      headers['Authorization'] = 'Bearer $accessToken';
     }
     
     // Dio instance er default header update korchi
@@ -52,7 +55,7 @@ class ApiClient {
     required String endpoints,
   }) async {
     try {
-      log("\nURL: ${ApiEndpoints.baseUrl}/$endpoints");
+      await headerSet();
       
       final response = await _dio.get(
         '/$endpoints',
@@ -72,7 +75,7 @@ class ApiClient {
     FormData? formData,
   }) async {
     try {
-      log("\nURL: ${ApiEndpoints.baseUrl}/$endpoints");
+      await headerSet();
       
       final response = await _dio.post(
         '/$endpoints',
@@ -99,7 +102,7 @@ class ApiClient {
     required Map<String, dynamic> body,
   }) async {
     try {
-      log("\nURL: ${ApiEndpoints.baseUrl}/$endpoints");
+      await headerSet();
       
       final response = await _dio.put(
         '/$endpoints',
@@ -120,7 +123,7 @@ class ApiClient {
     FormData? formData,
   }) async {
     try {
-      log("\nURL: ${ApiEndpoints.baseUrl}/$endpoints");
+      await headerSet();
       
       final response = await _dio.patch(
         '/$endpoints',
@@ -143,7 +146,7 @@ class ApiClient {
     required String endpoints,
   }) async {
     try {
-      log("\nURL: ${ApiEndpoints.baseUrl}/$endpoints");
+      await headerSet();
       
       final response = await _dio.delete(
         '/$endpoints',
@@ -162,7 +165,6 @@ class ApiClient {
     if (e is DioException) {
       return ErrorHandle.handleDioError(e);
     } else {
-      log('Non-Dio error: $e');
       return null;
     }
   }
