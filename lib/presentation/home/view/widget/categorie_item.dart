@@ -3,9 +3,9 @@ import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 
 class CategoryItem extends StatelessWidget {
   final String title;
-  final IconData icon;
+  final String image; // IconData এর বদলে String image
 
-  const CategoryItem({super.key, required this.title, required this.icon});
+  const CategoryItem({super.key, required this.title, required this.image});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,23 @@ class CategoryItem extends StatelessWidget {
                 width: 1,
               ),
             ),
-            child: Icon(icon, color: ColorManager.primary, size: 30),
+            child: ClipOval(
+              child: image.startsWith('http')
+                  ? Image.network(
+                      image,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => 
+                        const Icon(Icons.category_outlined, color: ColorManager.primary),
+                    )
+                  : (image.isNotEmpty 
+                      ? Image.asset(
+                          image,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => 
+                            const Icon(Icons.category_outlined, color: ColorManager.primary),
+                        )
+                      : const Icon(Icons.category_outlined, color: ColorManager.primary)),
+            ),
           ),
           const SizedBox(height: 4),
           Text(

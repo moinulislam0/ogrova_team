@@ -1,19 +1,14 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // legacy এর বদলে এটি ব্যবহার করা ভালো
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:ogrova_team/core/network/api_clients.dart';
-import 'package:ogrova_team/data/models/public_products_model.dart';
 import 'package:ogrova_team/data/models/shopping_cart_model.dart';
-import 'package:ogrova_team/data/repositories/public_products_repository.dart';
 import 'package:ogrova_team/data/repositories/shopping_cart_repository.dart';
-import 'package:ogrova_team/data/sources/remote/public_products_service.dart';
 import 'package:ogrova_team/data/sources/remote/shopping_cart_api_service.dart';
 
 class ShoppingCartState {
   final String? errorMessage;
   final bool isLoading;
   final bool isCheckingOut;
-  /// Keys of cart rows whose quantity request is in progress.  Keeping this
-  /// per row prevents one button press from affecting every cart card.
+  
   final Set<String> updatingItemKeys;
   final ShoppingCartModel? data;
 

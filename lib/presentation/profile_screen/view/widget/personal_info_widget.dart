@@ -1,9 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // Riverpod ইম্পোর্ট করা হয়েছে
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrova_team/presentation/profile_screen/viewModel/order_details_provider.dart';
 
 const Color kPrimary = Color(0xFF00A86B);
-const Color kPrimaryDark = Color(0xFF008C5A);
+
+final profileFormControllerProvider = Provider(
+  (ref) => ProfileFormControllers(),
+);
+
+class ProfileFormControllers {
+  final name = TextEditingController();
+  final phone = TextEditingController();
+  final email = TextEditingController();
+  final presentAddress = TextEditingController();
+  final permanentAddress = TextEditingController();
+  final nationalId = TextEditingController();
+  String? gender;
+  String? bloodGroup;
+
+  void dispose() {
+    name.dispose();
+    phone.dispose();
+    email.dispose();
+    presentAddress.dispose();
+    permanentAddress.dispose();
+    nationalId.dispose();
+  }
+}
 
 class PremiumPersonalInfoForm extends ConsumerStatefulWidget {
   const PremiumPersonalInfoForm({super.key});
@@ -15,44 +38,22 @@ class PremiumPersonalInfoForm extends ConsumerStatefulWidget {
 
 class _PremiumPersonalInfoFormState
     extends ConsumerState<PremiumPersonalInfoForm> {
-  late TextEditingController nameController;
-  late TextEditingController phoneController;
-  late TextEditingController emailController;
-  late TextEditingController addressController;
-
-  String? selectedGender;
-  String? selectedBloodGroup;
-
-  @override
-  void initState() {
-    super.initState();
-    nameController = TextEditingController();
-    phoneController = TextEditingController();
-    emailController = TextEditingController();
-    addressController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    phoneController.dispose();
-    emailController.dispose();
-    addressController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(orderDetailsProvider);
     final user = state.data?.data?.data?.firstOrNull?.user;
+    final controllers = ref.watch(profileFormControllerProvider);
 
-    if (user != null && nameController.text.isEmpty) {
-      nameController.text = user.name ?? "";
-      phoneController.text = user.phone ?? "";
-      emailController.text = user.email ?? "";
-      addressController.text = user.presentAddress ?? "";
-      selectedGender = user.gender;
-      selectedBloodGroup = user.bloodGroup;
+    // Initial value setup
+    if (user != null && controllers.name.text.isEmpty) {
+      controllers.name.text = user.name ?? "";
+      controllers.phone.text = user.phone ?? "";
+      controllers.email.text = user.email ?? "";
+      controllers.presentAddress.text = user.presentAddress ?? "";
+      controllers.permanentAddress.text = user.permanentAddress ?? "";
+      controllers.nationalId.text = user.nationalId ?? "";
+      controllers.gender = user.gender;
+      controllers.bloodGroup = user.bloodGroup;
     }
 
     final colors = Theme.of(context).colorScheme;
@@ -75,32 +76,37 @@ class _PremiumPersonalInfoFormState
             context,
             label: "Full Name",
             hintText: "Enter your full name",
-            controller: nameController,
+            controller: controllers.name,
             icon: Icons.person_outline_rounded,
           ),
           const SizedBox(height: 16),
-
-          // Phone Number
           _buildField(
             context,
             label: "Phone Number",
             hintText: "e.g. 017XXXXXXXX",
-            controller: phoneController,
+            controller: controllers.phone,
             icon: Icons.phone_outlined,
           ),
           const SizedBox(height: 16),
 
-          // Email Address
           _buildField(
             context,
             label: "Email Address",
             hintText: "Enter your email address",
-            controller: emailController,
+            controller: controllers.email,
             icon: Icons.email_outlined,
+            readOnly: true,
+          ),
+
+          const SizedBox(height: 16),
+          _buildField(
+            context,
+            label: "National ID (NID)",
+            hintText: "Enter your NID number",
+            controller: controllers.nationalId,
+            icon: Icons.badge_outlined,
           ),
           const SizedBox(height: 16),
-
-          // Gender & Blood Group Row
           Row(
             children: [
               Expanded(
@@ -108,8 +114,12 @@ class _PremiumPersonalInfoFormState
                   context,
                   "Gender",
                   ["Select", "Male", "Female"],
-                  currentValue: selectedGender,
-                  onChanged: (val) => setState(() => selectedGender = val),
+                  currentValue: controllers.gender,
+                  onChanged: (val) {
+                    setState(() {
+                      controllers.gender = val;
+                    });
+                  },
                 ),
               ),
               const SizedBox(width: 12),
@@ -118,21 +128,29 @@ class _PremiumPersonalInfoFormState
                   context,
                   "Blood Group",
                   ["Select", "A+", "B+", "O+", "AB+", "A-", "B-", "O-", "AB-"],
-                  currentValue: selectedBloodGroup,
-                  onChanged: (val) => setState(() => selectedBloodGroup = val),
+                  currentValue: controllers.bloodGroup,
+                  onChanged: (val) =>
+                      setState(() => controllers.bloodGroup = val),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-
-          // Present Address
           _buildField(
             context,
             label: "Present Address",
             hintText: "House, Road, Area details...",
-            controller: addressController,
+            controller: controllers.presentAddress,
             icon: Icons.location_on_outlined,
+            maxLines: 2,
+          ),
+          const SizedBox(height: 16),
+          _buildField(
+            context,
+            label: "Permanent Address",
+            hintText: "Enter permanent address",
+            controller: controllers.permanentAddress,
+            icon: Icons.home_outlined,
             maxLines: 2,
           ),
         ],
@@ -147,6 +165,7 @@ class _PremiumPersonalInfoFormState
     required TextEditingController controller,
     required IconData icon,
     int maxLines = 1,
+    bool readOnly = false,
   }) {
     final colors = Theme.of(context).colorScheme;
     return Column(
@@ -164,9 +183,12 @@ class _PremiumPersonalInfoFormState
         TextFormField(
           controller: controller,
           maxLines: maxLines,
+          readOnly: readOnly,
           style: TextStyle(
             fontSize: 14,
-            color: colors.onSurface,
+            color: readOnly
+                ? colors.onSurface.withOpacity(0.5)
+                : colors.onSurface,
             fontWeight: FontWeight.w500,
           ),
           decoration: InputDecoration(
@@ -188,7 +210,7 @@ class _PremiumPersonalInfoFormState
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: colors.outlineVariant),
+              borderSide: BorderSide(color: Colors.grey),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
@@ -208,11 +230,9 @@ class _PremiumPersonalInfoFormState
     required Function(String?) onChanged,
   }) {
     final colors = Theme.of(context).colorScheme;
-
     String? effectiveValue = items.contains(currentValue)
         ? currentValue
         : items.first;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -252,7 +272,7 @@ class _PremiumPersonalInfoFormState
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: colors.outlineVariant),
+              borderSide: BorderSide(color: Colors.grey),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),

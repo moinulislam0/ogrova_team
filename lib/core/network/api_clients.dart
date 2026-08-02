@@ -101,7 +101,7 @@ class ApiClient {
   /// PUT request
    Future<dynamic> putRequest({
     required String endpoints,
-    required Map<String, dynamic> body,
+    required dynamic body,
   }) async {
     try {
       await headerSet();

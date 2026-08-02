@@ -21,6 +21,9 @@ class ApiEndpoints {
    static const String  billingAddress = 'api/customer/addresses/get';
    static const String couponCheck = 'api/coupon/check';
    static const String orderDetails = 'api/orders/user/details';
+   static const String profile = 'api/profile';
+   static const String getCategories = 'api/public/get-categories';
+
    static String updateCartQuantity(String reg, int productId, int variantId) =>
        'api/cart/qty-update/$reg/$productId/$variantId';
    static String deleteCart(int cartId, String reg, int productId, int variantId) =>
@@ -29,6 +32,8 @@ class ApiEndpoints {
        'api/customer/addresses/delete/$id';
    static String payment(String routeReg,) =>
        'api/orders/confirm/$routeReg';
+   static String categoryProducts(int id,) =>
+       'api/public/category-products/$id';
 
   
 }

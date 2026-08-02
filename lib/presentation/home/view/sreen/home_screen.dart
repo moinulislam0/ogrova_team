@@ -6,6 +6,7 @@ import 'package:ogrova_team/presentation/home/view/widget/home_banner.dart';
 import 'package:ogrova_team/presentation/home/view/widget/product_grid_view.dart';
 import 'package:ogrova_team/presentation/home/view/widget/search_bar.dart';
 import 'package:ogrova_team/presentation/home/view/widget/section_header.dart';
+import 'package:ogrova_team/presentation/home/viewModel/get_categories_provider.dart';
 import 'package:ogrova_team/presentation/home/viewModel/public_products_provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -21,11 +22,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     Future.microtask(() {
       ref.read(publicProducts.notifier).getPublicProducts();
+      ref.read(getProductsProvider.notifier).getPublicProducts();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final categoryState = ref.watch(getProductsProvider);
+    final categories = categoryState.data?.data ?? [];
     return Scaffold(
       backgroundColor: Colors.transparent,
       drawer: const Drawer(),
@@ -36,26 +40,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           children: [
             const OgrovaSearchBar(),
             const HomeBanner(),
-            
-            
+
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
               child: Row(
-                children: const [
-                  CategoryItem(title: "All", icon: Icons.all_inbox),
-                  CategoryItem(title: "Shoe", icon: Icons.label),
-                  CategoryItem(title: "home", icon: Icons.ice_skating_outlined),
-                  CategoryItem(title: "home", icon: Icons.ice_skating_outlined),
-                  CategoryItem(title: "home", icon: Icons.ice_skating_outlined),
-                  CategoryItem(title: "home", icon: Icons.ice_skating_outlined),
-                  CategoryItem(title: "home", icon: Icons.ice_skating_outlined),
+                children: [
+                  const CategoryItem(
+                    title: "All",
+                    image: "assets/images/all_category.png",
+                  ),
+
+                  if (categoryState.isLoading)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  else
+                    ...categories.map((category) {
+                      return CategoryItem(
+                        title: category.name ?? "",
+                        image: category.image ?? "",
+                      );
+                    }).toList(),
                 ],
               ),
             ),
-            
+
             const SectionHeader(title: "FEATURED PRODUCTS"),
-            
-        
+
             const ProductGridView(),
 
             const SizedBox(height: 30),

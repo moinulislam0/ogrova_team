@@ -17,6 +17,7 @@ import 'package:ogrova_team/presentation/profile_screen/view/widget/security_wid
 import 'package:ogrova_team/presentation/profile_screen/view/widget/star_card_widget.dart';
 import 'package:ogrova_team/presentation/profile_screen/view/widget/theme_widget.dart';
 import 'package:ogrova_team/presentation/profile_screen/viewModel/order_details_provider.dart';
+import 'package:ogrova_team/presentation/profile_screen/viewModel/profile_update_provider.dart'; // Import update provider
 
 const Color kPrimary = Color(0xFF00A86B);
 const Color kPrimaryDark = Color(0xFF008C5A);
@@ -52,10 +53,42 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
+
+  Future<void> _handleUpdate() async {
+    final controllers = ref.read(profileFormControllerProvider);
+    final updateNotifier = ref.read(profileUpdateProvider.notifier);
+    final image = ref.read(selectedImageProvider);
+    
+    final success = await updateNotifier.profileUpdate(
+      name: controllers.name.text,
+      email: controllers.email.text,
+      dob: "", 
+      phone: controllers.phone.text,
+      gender: controllers.gender ?? "",
+      bloodGroup: controllers.bloodGroup ?? "",
+      presentAddress: controllers.presentAddress.text,
+      permanentAddress: controllers.permanentAddress.text,
+      nationalId: controllers.nationalId.text,
+      photo: image?.path ?? "",
+    );
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Profile updated successfully!")),
+      );
+      ref.read(orderDetailsProvider.notifier).getdata(); // ডাটা রিফ্রেশ
+    } else {
+      final error = ref.read(profileUpdateProvider).errorMessage;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error ?? "Update failed")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(orderDetailsProvider);
-    final userData = state.data?.data?.data?.firstOrNull?.user;
+    final updateState = ref.watch(profileUpdateProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -88,8 +121,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ],
             ),
             child: IconButton(
-              onPressed: () =>
-                  ref.read(orderDetailsProvider.notifier).getdata(),
+              onPressed: () => ref.read(orderDetailsProvider.notifier).getdata(),
               icon: Icon(
                 Icons.refresh_rounded,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -130,7 +162,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 Expanded(
                   child: PremiumStatCard(
                     label: "Points",
-                    value: "${state.data?.data?.data?.first.point ?? 0}",
+                    value: "${state.data?.data?.data?.firstOrNull?.point ?? 0}",
                     icon: Icons.workspace_premium_outlined,
                     gradientColors: [kPrimary, kPrimaryDark],
                   ),
@@ -139,7 +171,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
             const SizedBox(height: 28),
 
-            // Manage Account
             const SectionHeader(title: "MANAGE ACCOUNT"),
             const SizedBox(height: 12),
             Container(
@@ -164,12 +195,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     iconBg: kPrimary.withOpacity(0.12),
                     iconColor: kPrimary,
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const OrderHistoryScreen(),
-                        ),
-                      );
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const OrderHistoryScreen()));
                     },
                   ),
                   _buildDivider(context),
@@ -181,10 +207,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     iconBg: const Color(0xFFF1F5F9),
                     iconColor: const Color(0xFF475569),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const ThemeScreen()),
-                      );
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const ThemeScreen()));
                     },
                   ),
                   _buildDivider(context),
@@ -196,12 +219,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     iconBg: const Color(0xFFF1F5F9),
                     iconColor: const Color(0xFF475569),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const NotificationScreen(),
-                        ),
-                      );
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationScreen()));
                     },
                   ),
                   _buildDivider(context),
@@ -213,12 +231,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     iconBg: const Color(0xFFF1F5F9),
                     iconColor: const Color(0xFF475569),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const SecurityScreen(),
-                        ),
-                      );
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const SecurityScreen()));
                     },
                   ),
                   _buildDivider(context),
@@ -230,12 +243,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     iconBg: const Color(0xFFF1F5F9),
                     iconColor: const Color(0xFF475569),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const PrivacyPolicyScreen(),
-                        ),
-                      );
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()));
                     },
                   ),
                   _buildDivider(context),
@@ -247,10 +255,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     iconBg: const Color(0xFFF1F5F9),
                     iconColor: const Color(0xFF475569),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const AboutScreen()),
-                      );
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const AboutScreen()));
                     },
                   ),
                   _buildDivider(context),
@@ -267,14 +272,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
             const SizedBox(height: 28),
 
-            // Personal Info
             const SectionHeader(title: "PERSONAL INFORMATION"),
             const SizedBox(height: 12),
             const PremiumPersonalInfoForm(),
 
             const SizedBox(height: 32),
 
-            // Save Button
+            // Save Button Implementation
             Container(
               width: double.infinity,
               height: 56,
@@ -294,14 +298,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ],
               ),
               child: ElevatedButton.icon(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.check_circle_outline,
-                  color: Colors.white,
-                ),
-                label: const Text(
-                  "SAVE CHANGES",
-                  style: TextStyle(
+                onPressed: updateState.isLoading ? null : _handleUpdate,
+                icon: updateState.isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : const Icon(Icons.check_circle_outline, color: Colors.white),
+                label: Text(
+                  updateState.isLoading ? "UPDATING..." : "SAVE CHANGES",
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.8,
@@ -311,9 +318,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                 ),
               ),
             ),
@@ -325,10 +330,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildDivider(BuildContext context) {
-    return Divider(
-      height: 1,
-      thickness: 1,
-      color: Theme.of(context).dividerColor,
-    );
+    return Divider(height: 1, thickness: 1, color: Theme.of(context).dividerColor);
   }
 }
