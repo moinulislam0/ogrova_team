@@ -1,23 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // Riverpod ইম্পোর্ট করা হয়েছে
 import 'package:ogrova_team/core/resource/constant/color_manager.dart';
+import 'package:ogrova_team/presentation/add_to-cart/viewModel/shopping_cart_provider.dart'; // Provider ইম্পোর্ট করা হয়েছে
 import 'package:ogrova_team/presentation/billing_address/view/screen/add_new_address.dart';
 import 'package:ogrova_team/presentation/billing_address/view/widget/address_card_widget.dart';
 import 'package:ogrova_team/presentation/billing_address/view/widget/custom_pay_button_widget.dart';
 import 'package:ogrova_team/presentation/billing_address/view/widget/payment_details_widget.dart';
 
-class BillingAddress extends StatefulWidget {
-  const BillingAddress({super.key});
+class BillingAddress extends ConsumerStatefulWidget { // StatefulWidget থেকে ConsumerStatefulWidget এ পরিবর্তন
+  final String reg;
+  const BillingAddress({super.key, required this.reg});
 
   @override
-  State<BillingAddress> createState() => _BillingAddressState();
+  ConsumerState<BillingAddress> createState() => _BillingAddressState();
 }
 
-class _BillingAddressState extends State<BillingAddress> {
+class _BillingAddressState extends ConsumerState<BillingAddress> {
   int selectedAddress = 1; // Default selected address index
   String selectedPayment = "cod";
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(shoppingCartProvider);
+    final cartItems = state.data?.data ?? [];
+
+    double subtotal = 0;
+    int totalPoints = 0;
+    for (var item in cartItems) {
+      subtotal += item.totalPayableAmount;
+    
+      totalPoints += item.totalPoints;
+    }
+    
+    double tax = 0.0; 
+    double shipping = 0.0;
+
+   
+    double totalAmount = subtotal + tax + shipping;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -48,7 +68,7 @@ class _BillingAddressState extends State<BillingAddress> {
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
                 children: [
-                  TextSpan(text: "Billing "),
+                  const TextSpan(text: "Billing "),
                   TextSpan(
                     text: "Address",
                     style: TextStyle(
@@ -132,7 +152,11 @@ class _BillingAddressState extends State<BillingAddress> {
               child: RadioListTile(
                 value: "cod",
                 groupValue: selectedPayment,
-                onChanged: (val) {},
+                onChanged: (val) {
+                  setState(() {
+                    selectedPayment = val.toString();
+                  });
+                },
                 activeColor: const Color(0xFF00A86B),
                 title: const Text(
                   "Cash on Delivery",
@@ -171,16 +195,26 @@ class _BillingAddressState extends State<BillingAddress> {
             ),
 
             const SizedBox(height: 30),
-            const PaymentDetailsSection(),
+           
+            PaymentDetailsSection(
+              shipping: shipping.toString(),
+              subtotal: subtotal.toString(),
+              totalPoints: totalPoints.toDouble().toString(),
+              tax: tax.toString(),
+            ),
             const SizedBox(height: 200), // Space for bottom button
           ],
         ),
       ),
-      bottomSheet: BottomPayButton(),
+      bottomSheet: BottomPayButton(
+        totalAmount: totalAmount, 
+        onPressed: () {
+        
+        },
+      ),
     );
   }
 
-  // Add New Address Modal Function
   void _showAddAddressModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -192,5 +226,3 @@ class _BillingAddressState extends State<BillingAddress> {
     );
   }
 }
-
-// --- Reusable Widgets ---

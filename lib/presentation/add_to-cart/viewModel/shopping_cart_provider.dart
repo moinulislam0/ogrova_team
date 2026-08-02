@@ -11,6 +11,7 @@ import 'package:ogrova_team/data/sources/remote/shopping_cart_api_service.dart';
 class ShoppingCartState {
   final String? errorMessage;
   final bool isLoading;
+  final bool isCheckingOut;
   /// Keys of cart rows whose quantity request is in progress.  Keeping this
   /// per row prevents one button press from affecting every cart card.
   final Set<String> updatingItemKeys;
@@ -18,6 +19,7 @@ class ShoppingCartState {
 
   ShoppingCartState({
     required this.isLoading,
+    this.isCheckingOut = false,
     this.updatingItemKeys = const {},
     this.errorMessage,
     this.data,
@@ -25,6 +27,7 @@ class ShoppingCartState {
 
  ShoppingCartState copyWith({
     bool? isLoading,
+    bool? isCheckingOut,
     Set<String>? updatingItemKeys,
     String? errorMessage,
     bool clearErrorMessage = false,
@@ -32,6 +35,7 @@ class ShoppingCartState {
   }) {
     return ShoppingCartState(
       isLoading: isLoading ?? this.isLoading,
+      isCheckingOut: isCheckingOut ?? this.isCheckingOut,
       updatingItemKeys: updatingItemKeys ?? this.updatingItemKeys,
       errorMessage: clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
       data: data ?? this.data,
@@ -149,7 +153,8 @@ class ShoppingCartProvider extends StateNotifier<ShoppingCartState> {
         updatingItemKeys: {...state.updatingItemKeys}..remove(itemKey),
       );
       return true;
-    } catch (e) {
+    }
+     catch (e) {
       state = state.copyWith(
         data: previousData,
         updatingItemKeys: {...state.updatingItemKeys}..remove(itemKey),

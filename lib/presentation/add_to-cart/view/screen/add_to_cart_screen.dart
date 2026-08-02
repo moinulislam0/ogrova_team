@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrova_team/presentation/add_to-cart/view/widget/cart_item_card_widget.dart';
 import 'package:ogrova_team/presentation/add_to-cart/view/widget/order_summary_card_widget.dart';
 import 'package:ogrova_team/presentation/add_to-cart/viewModel/shopping_cart_provider.dart';
+import 'package:ogrova_team/presentation/billing_address/view/screen/billing_address.dart';
 
 class ShoppingCartScreen extends ConsumerStatefulWidget {
   const ShoppingCartScreen({super.key});
@@ -25,6 +26,7 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(shoppingCartProvider);
     final cartItems = state.data?.data ?? [];
+    final checkoutReg = state.data?.reg ?? cartItems.firstOrNull?.reg ?? '';
 
     double subtotal = 0;
     int totalPoints = 0;
@@ -149,7 +151,6 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
                                   ref
                                       .read(shoppingCartProvider.notifier)
                                       .deleteItem(cartData);
-                                 
                                 },
                               );
                             },
@@ -174,7 +175,24 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
                   ),
                 ],
               ),
-              child: OrderSummaryCard(subtotal: subtotal, points: totalPoints),
+              child: OrderSummaryCard(
+                subtotal: subtotal,
+                points: totalPoints,
+                isCheckingOut: state.isCheckingOut,
+                reg: state.data?.reg.toString() ?? '',
+                onCheckout: () async {
+                  {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BillingAddress(
+                          reg: state.data?.reg.toString() ?? '',
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
             ),
         ],
       ),

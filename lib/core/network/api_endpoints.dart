@@ -17,4 +17,6 @@ class ApiEndpoints {
        'api/cart/qty-update/$reg/$productId/$variantId';
    static String deleteCart(int cartId, String reg, int productId, int variantId) =>
        'api/cart/remove-to-cart/$cartId/$reg/$productId/$variantId';
+
+  
 }

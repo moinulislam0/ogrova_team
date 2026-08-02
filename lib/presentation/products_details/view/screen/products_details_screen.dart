@@ -29,6 +29,10 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   int selectedVariantIndex = 0;
   int activeImageIndex = 0;
 
+  // বাটন লোডিং আলাদা করার জন্য নতুন ভেরিয়েবল
+  bool isCartLoading = false;
+  bool isBuyLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -57,8 +61,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     final product = ref.read(productDetailsProvider).data?.data;
     if (product == null) return;
 
-    final int productId = product.id ?? 0;
+    setState(() => isCartLoading = true); // শুধুমাত্র কার্ট লোডিং শুরু
 
+    final int productId = product.id ?? 0;
     final int variantId =
         (product.variants != null && product.variants!.isNotEmpty)
         ? (product.variants![selectedVariantIndex].id ?? 0)
@@ -71,6 +76,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           variantId: variantId,
           quantity: quantity,
         );
+
+    if (mounted) setState(() => isCartLoading = false); // লোডিং শেষ
 
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -105,6 +112,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     final product = ref.read(productDetailsProvider).data?.data;
     if (product == null) return;
 
+    setState(() => isBuyLoading = true); // শুধুমাত্র বাই নাও লোডিং শুরু
+
     final productId = product.id ?? 0;
     final variantId = product.variants != null && product.variants!.isNotEmpty
         ? (product.variants![selectedVariantIndex].id ?? 0)
@@ -117,6 +126,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           variantId: variantId,
           quantity: quantity,
         );
+
+    if (mounted) setState(() => isBuyLoading = false); // লোডিং শেষ
 
     if (!mounted) return;
     if (!added) {
@@ -307,8 +318,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   }
 
   Widget _buildBottomBar(BuildContext context) {
-    final cartState = ref.watch(addToCardProvider);
-
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 30),
       decoration: BoxDecoration(
@@ -352,22 +361,22 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           const SizedBox(height: 15),
           ActionButton(
             ontap: () {
-              if (!cartState.isLoading) {
+              if (!isCartLoading && !isBuyLoading) {
                 _handleAddToCart();
               }
             },
-            label: cartState.isLoading ? "ADDING..." : "ADD TO CART",
+            label: isCartLoading ? "ADDING..." : "ADD TO CART",
             icon: Icons.shopping_bag_outlined,
             isPrimary: false,
           ),
           const SizedBox(height: 10),
           ActionButton(
             ontap: () {
-              if (!cartState.isLoading) {
+              if (!isCartLoading && !isBuyLoading) {
                 _handleBuyNow();
               }
             },
-            label: cartState.isLoading ? "ADDING..." : "BUY NOW",
+            label: isBuyLoading ? "ADDING..." : "BUY NOW",
             icon: Icons.flash_on,
             isPrimary: true,
           ),

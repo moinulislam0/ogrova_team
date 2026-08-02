@@ -1,5 +1,7 @@
+import 'dart:developer' as developer;
+
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:ogrova_team/data/sources/local/shared_preference/shared_prefenrence.dart';
 
 import 'api_endpoints.dart';
@@ -19,7 +21,7 @@ class ApiClient {
         'Accept': 'application/json',
       },
     ),
-  );
+  )..interceptors.add(_ApiDebugInterceptor());
 
   static Map<String, String> headers = {
     'Content-Type': 'application/json',
@@ -134,7 +136,6 @@ class ApiClient {
         ),
       );
 
-      debugPrint("PATCH Request Successful: ${response.statusCode}");
       return ResposeHandle.handleResponse(response);
     } catch (e) {
       return _handleError(e);
@@ -153,7 +154,6 @@ class ApiClient {
         options: Options(headers: headers),
       );
 
-      debugPrint("DELETE Request Successful: ${response.statusCode}");
       return ResposeHandle.handleResponse(response);
     } catch (e) {
       return _handleError(e);
@@ -167,5 +167,52 @@ class ApiClient {
     } else {
       return null;
     }
+  }
+}
+
+/// Logs every request and response to the IDE debug console in debug builds.
+/// Request headers are deliberately excluded so authentication tokens are not
+/// written to the console.
+class _ApiDebugInterceptor extends Interceptor {
+  static const _logName = 'API';
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    if (kDebugMode) {
+      developer.log(
+        'REQUEST ${options.method} ${options.uri}'
+        '\nData: ${options.data ?? 'No request body'}',
+        name: _logName,
+      );
+    }
+    handler.next(options);
+  }
+
+  @override
+  void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
+    if (kDebugMode) {
+      developer.log(
+        'RESPONSE ${response.statusCode} ${response.requestOptions.method} '
+        '${response.requestOptions.uri}'
+        '\nData: ${response.data}',
+        name: _logName,
+      );
+    }
+    handler.next(response);
+  }
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    if (kDebugMode) {
+      developer.log(
+        'ERROR ${err.response?.statusCode ?? 'No status'} '
+        '${err.requestOptions.method} ${err.requestOptions.uri}'
+        '\nMessage: ${err.message}'
+        '\nResponse data: ${err.response?.data}',
+        name: _logName,
+        error: err,
+      );
+    }
+    handler.next(err);
   }
 }

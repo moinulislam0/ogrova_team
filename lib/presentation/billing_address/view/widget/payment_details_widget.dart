@@ -1,8 +1,11 @@
-
 import 'package:flutter/material.dart';
 
 class PaymentDetailsSection extends StatelessWidget {
-  const PaymentDetailsSection({super.key});
+  final String subtotal;
+  final String totalPoints;
+  final String shipping;
+  final String tax;
+  const PaymentDetailsSection({super.key, required this.subtotal, required this.totalPoints, required this.shipping, required this.tax});
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +30,11 @@ class PaymentDetailsSection extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 15),
-        _row("Subtotal", "৳ 3,704"),
-        _row("Shipping", "৳ 120", isGreen: true),
-        _row("Point", "1,391 pts", isBold: true),
-        _row("Estimated Tax", "৳ 0"),
+        SizedBox(height: 15),
+        _row("Subtotal", subtotal),
+        _row("Shipping", shipping, isGreen: true),
+        _row("Point", totalPoints, isBold: true),
+        _row("Estimated Tax", tax),
         const SizedBox(height: 15),
         Container(
           padding: const EdgeInsets.all(15),

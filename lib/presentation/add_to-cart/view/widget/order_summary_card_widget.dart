@@ -3,12 +3,17 @@ import 'package:ogrova_team/presentation/billing_address/view/screen/billing_add
 
 class OrderSummaryCard extends StatelessWidget {
   final double subtotal;
+  final String reg;
   final int points;
+  final bool isCheckingOut;
+  final Future<void> Function()? onCheckout;
 
   const OrderSummaryCard({
     super.key,
     required this.subtotal,
     required this.points,
+    this.isCheckingOut = false,
+    this.onCheckout, required this.reg,
   });
 
   @override
@@ -130,27 +135,44 @@ class OrderSummaryCard extends StatelessWidget {
                 ),
                 elevation: 0,
               ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => BillingAddress()),
-                );
-              },
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Checkout Now",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+              onPressed: isCheckingOut
+                  ? null
+                  : () async {
+                      if (onCheckout != null) {
+                        await onCheckout!();
+                        return;
+                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BillingAddress(reg: reg),
+                        ),
+                      );
+                    },
+              child: isCheckingOut
+                  ? const SizedBox(
+                      height: 22,
+                      width: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Checkout Now",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Icon(Icons.arrow_forward, color: Colors.white),
+                      ],
                     ),
-                  ),
-                  SizedBox(width: 10),
-                  Icon(Icons.arrow_forward, color: Colors.white),
-                ],
-              ),
             ),
           ),
           const SizedBox(height: 15),
