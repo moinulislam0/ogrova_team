@@ -1,17 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:ogrova_team/core/resource/constant/color_manager.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart'; // ডেট ফরম্যাট করার জন্য
+import 'package:ogrova_team/presentation/profile_screen/viewModel/order_details_provider.dart';
+
 const Color kPrimary = Color(0xFF00A86B);
-const Color kPrimaryDark = Color(0xFF008C5A);
-const Color kBg = Color(0xFFF1F5F9);
-const Color kTextDark = Color(0xFF0F172A);
-const Color kTextMuted = Color(0xFF64748B);
-class OrderDetailsScreen extends StatelessWidget {
+
+class OrderDetailsScreen extends ConsumerStatefulWidget {
   final String orderId;
   const OrderDetailsScreen({super.key, required this.orderId});
 
   @override
+  ConsumerState<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
+}
+
+class _OrderDetailsScreenState extends ConsumerState<OrderDetailsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => ref.read(orderDetailsProvider.notifier).getdata());
+  }
+
+  // ডেট ফরম্যাট করার ফাংশন - এখানে N/A এর বদলে Pending করা হয়েছে
+  String formatDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return "Pending";
+    try {
+      DateTime dt = DateTime.parse(dateStr);
+      return DateFormat('dd MMM yyyy').format(dt);
+    } catch (e) {
+      // যদি স্ট্রিংটি ডেট না হয় তবে যা আছে তাই দেখাবে অথবা স্লিট করে তারিখ নিবে
+      return dateStr.contains('T') ? dateStr.split('T')[0] : dateStr;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final state = ref.watch(orderDetailsProvider);
     final colors = Theme.of(context).colorScheme;
+
+    if (state.isloading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator(color: kPrimary)),
+      );
+    }
+
+    if (state.errormessage != null) {
+      return Scaffold(body: Center(child: Text(state.errormessage!)));
+    }
+
+    final list = state.data?.data?.data;
+    final order = list?.firstWhere(
+      (element) => element.reg == widget.orderId,
+      orElse: () => list!.first,
+    );
+
+    if (order == null) {
+      return const Scaffold(
+        body: Center(child: Text("No order details found")),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.black54,
       body: Center(
@@ -45,7 +92,7 @@ class OrderDetailsScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            "Order Ref: $orderId",
+                            "Order Ref: ${order.reg ?? ""}",
                             style: const TextStyle(
                               fontSize: 13,
                               color: kPrimary,
@@ -78,14 +125,22 @@ class OrderDetailsScreen extends StatelessWidget {
                         ),
                         child: Row(
                           children: [
-                            _infoItem(context, "Order Date", "Jul 30, 2026"),
+                            _infoItem(
+                              context,
+                              "Order Date",
+                              formatDate(order.date),
+                            ),
                             _infoItem(
                               context,
                               "Order Status",
-                              "Pending",
+                              order.status ?? "",
                               isStatus: true,
                             ),
-                            _infoItem(context, "Payment Method", "COD (PENDING)"),
+                            _infoItem(
+                              context,
+                              "Payment Method",
+                              order.paymentMethod ?? "",
+                            ),
                           ],
                         ),
                       ),
@@ -101,7 +156,7 @@ class OrderDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 14),
-                      _buildTimeline(context),
+                      _buildTimeline(context, order),
                       const SizedBox(height: 24),
 
                       // Shipping Details
@@ -157,28 +212,28 @@ class OrderDetailsScreen extends StatelessWidget {
                               context,
                               Icons.person_outline,
                               "RECIPIENT",
-                              "Samim Hossain",
+                              order.contactName ?? "",
                             ),
                             const SizedBox(height: 12),
                             _shipRow(
                               context,
                               Icons.phone_outlined,
                               "PHONE",
-                              "01712345678",
+                              order.contactNumber ?? "",
                             ),
                             const SizedBox(height: 12),
                             _shipRow(
                               context,
                               Icons.location_on_outlined,
                               "ADDRESS",
-                              "House #12, Road #5, Dhanmondi",
+                              order.shippingAddress ?? "",
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 24),
 
-                      // Items
+                      // Items Section
                       Text(
                         "ITEMS ORDERED",
                         style: TextStyle(
@@ -189,56 +244,74 @@ class OrderDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: colors.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Sample Product 284",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14,
-                                      color: colors.onSurface,
+                      ...order.items!.map((item) {
+                        double itemTotal =
+                            (double.tryParse(item.price ?? '0') ?? 0) *
+                            (item.quantity ?? 0);
+
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: colors.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.product?.name ?? "N/A",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                        color: colors.onSurface,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(height: 2),
-                                  Text(
-                                    "Qty : 1 × ৳148.00",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: colors.onSurfaceVariant,
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      "Qty : ${item.quantity} × ৳${item.price}",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: colors.onSurfaceVariant,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            Text(
-                              "৳148.00",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14,
-                                color: colors.onSurface,
+                              Text(
+                                "৳${itemTotal.toStringAsFixed(2)}",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                  color: colors.onSurface,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
+                            ],
+                          ),
+                        );
+                      }),
                       const SizedBox(height: 20),
 
                       // Summary
-                      _summaryRow("Subtotal", "৳148.00"),
-                      _summaryRow("Discount", "- ৳123.00", isDiscount: true),
-                      _summaryRow("Shipping Charge", "৳120.00"),
+                      _summaryRow("Subtotal", "৳${order.amount}"),
+                      _summaryRow(
+                        "Discount",
+                        "- ৳${order.discount}",
+                        isDiscount: true,
+                      ),
+                      _summaryRow(
+                        "Shipping Charge",
+                        "৳${order.shippingCharge}",
+                      ),
                       const Divider(height: 24),
-                      _summaryRow("Total Payable", "৳145.00", isTotal: true),
+                      _summaryRow(
+                        "Total Payable",
+                        "৳${order.payableAmount}",
+                        isTotal: true,
+                      ),
                     ],
                   ),
                 ),
@@ -323,16 +396,45 @@ class OrderDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTimeline(BuildContext context) {
+  Widget _buildTimeline(BuildContext context, dynamic order) {
     final colors = Theme.of(context).colorScheme;
     final steps = [
-      {"title": "Placed", "date": "Jul 30, 2026", "done": true},
-      {"title": "Confirmed", "date": "Pending", "done": false},
-      {"title": "Processing", "date": "Pending", "done": false},
-      {"title": "Picked", "date": "Pending", "done": false},
-      {"title": "Shipped", "date": "Pending", "done": false},
-      {"title": "Out for delivery", "date": "Pending", "done": false},
-      {"title": "Delivered", "date": "Pending", "done": false},
+      {
+        "title": "Placed",
+        "date": formatDate(order.createdAt),
+        "done": true,
+        "icon": Icons.shopping_cart_checkout,
+      },
+      {
+        "title": "Confirmed",
+        "date": formatDate(order.confirmedAt),
+        "done": order.confirmedAt != null,
+        "icon": Icons.fact_check_outlined,
+      },
+      {
+        "title": "Processing",
+        "date": formatDate(order.processingAt),
+        "done": order.processingAt != null,
+        "icon": Icons.sync,
+      },
+      {
+        "title": "Picked",
+        "date": formatDate(order.pickedAt),
+        "done": order.pickedAt != null,
+        "icon": Icons.inventory_2_outlined,
+      },
+      {
+        "title": "Shipped",
+        "date": formatDate(order.shippedAt),
+        "done": order.shippedAt != null,
+        "icon": Icons.local_shipping_outlined,
+      },
+      {
+        "title": "Delivered",
+        "date": formatDate(order.deliveredAt),
+        "done": order.deliveredAt != null,
+        "icon": Icons.task_alt,
+      },
     ];
 
     return SingleChildScrollView(
@@ -362,7 +464,7 @@ class OrderDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 child: Icon(
-                  done ? Icons.shopping_bag : Icons.circle_outlined,
+                  step["icon"] as IconData,
                   size: 16,
                   color: done ? Colors.white : colors.outline,
                 ),

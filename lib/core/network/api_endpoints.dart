@@ -20,6 +20,7 @@ class ApiEndpoints {
    static const String  shoppingCart= 'api/cart';
    static const String  billingAddress = 'api/customer/addresses/get';
    static const String couponCheck = 'api/coupon/check';
+   static const String orderDetails = 'api/orders/user/details';
    static String updateCartQuantity(String reg, int productId, int variantId) =>
        'api/cart/qty-update/$reg/$productId/$variantId';
    static String deleteCart(int cartId, String reg, int productId, int variantId) =>
