@@ -99,7 +99,7 @@ class ApiClient {
   }
 
   /// PUT request
-  static Future<dynamic> putRequest({
+   Future<dynamic> putRequest({
     required String endpoints,
     required Map<String, dynamic> body,
   }) async {
@@ -119,7 +119,7 @@ class ApiClient {
   }
 
   /// PATCH request
-  static Future<dynamic> patchRequest({
+   Future<dynamic> patchRequest({
     required String endpoints,
     Map<String, dynamic>? body,
     FormData? formData,
@@ -143,7 +143,7 @@ class ApiClient {
   }
 
   /// DELETE request
-  static Future<dynamic> deleteRequest({
+  Future<dynamic> deleteRequest({
     required String endpoints,
   }) async {
     try {

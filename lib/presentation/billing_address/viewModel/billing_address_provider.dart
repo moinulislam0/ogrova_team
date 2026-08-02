@@ -51,6 +51,18 @@ class BillingAddressProvider extends StateNotifier<BillingAddressState> {
       return false;
     }
   }
+  Future<bool> deleteAddress(int id) async {
+    try {
+      final success = await remote.deleteAddress(id);
+      if (success) {
+       
+        await getPublicProducts();
+      }
+      return success;
+    } catch (e) {
+      return false;
+    }
+  }
 }
 
 final billingAddressProvider =

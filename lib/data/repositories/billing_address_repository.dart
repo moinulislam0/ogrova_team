@@ -8,4 +8,7 @@ class BillingAddressRepository {
   Future<BillingAddressModel> billingAddress() async {
     return remote.billing();
   }
+   Future<bool> deleteAddress(int id) async {
+    return remote.deleteAddress(id);
+  }
 }

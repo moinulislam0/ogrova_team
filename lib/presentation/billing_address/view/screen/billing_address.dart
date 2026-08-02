@@ -6,8 +6,8 @@ import 'package:ogrova_team/presentation/billing_address/view/screen/add_new_add
 import 'package:ogrova_team/presentation/billing_address/view/widget/address_card_widget.dart';
 import 'package:ogrova_team/presentation/billing_address/view/widget/custom_pay_button_widget.dart';
 import 'package:ogrova_team/presentation/billing_address/view/widget/payment_details_widget.dart';
-
 import 'package:ogrova_team/presentation/billing_address/viewModel/billing_address_provider.dart';
+import 'package:ogrova_team/presentation/billing_address/viewModel/payment_method_provider.dart';
 
 class BillingAddress extends ConsumerStatefulWidget {
   final String reg;
@@ -21,18 +21,65 @@ class _BillingAddressState extends ConsumerState<BillingAddress> {
   int? selectedAddressId;
   String selectedPayment = "cod";
   double couponDiscount = 0;
+  String appliedCouponCode = "";
+
+  bool sameAsDefaultBilling = true;
+  bool saveInformation = false;
+
+  final TextEditingController _remarkController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
 
-    Future.microtask(() => ref.read(billingAddressProvider.notifier).getPublicProducts());
+    Future.microtask(
+      () => ref.read(billingAddressProvider.notifier).getPublicProducts(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _remarkController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handlePayment() async {
+    if (selectedAddressId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please select a shipping address")),
+      );
+      return;
+    }
+
+    final success = await ref
+        .read(paymentMethodProvider.notifier)
+        .crateAddress(
+          sameAdress: sameAsDefaultBilling,
+          sameInfo: saveInformation,
+          addressId: selectedAddressId!,
+          paytmentMethod: selectedPayment,
+          remark: _remarkController.text,
+          coupon: appliedCouponCode,
+          reg: widget.reg,
+        );
+
+    if (success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Order placed successfully!")),
+      );
+    } else if (mounted) {
+      final error = ref.read(paymentMethodProvider).errorMessage;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(error ?? "Payment failed")));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(shoppingCartProvider);
     final addressState = ref.watch(billingAddressProvider);
+    final paymentStatus = ref.watch(paymentMethodProvider);
 
     final cartItems = state.data?.data ?? [];
     final addresses = addressState.data?.data ?? [];
@@ -45,7 +92,8 @@ class _BillingAddressState extends ConsumerState<BillingAddress> {
     }
 
     const double tax = 0.0;
-    final double shipping = double.tryParse(
+    final double shipping =
+        double.tryParse(
           addresses.isNotEmpty ? addresses.first.deliveryCharge ?? '' : '',
         ) ??
         0;
@@ -133,15 +181,29 @@ class _BillingAddressState extends ConsumerState<BillingAddress> {
               Column(
                 children: List.generate(addresses.length, (index) {
                   final address = addresses[index];
-                  if (selectedAddressId == null && (address.isDefault ?? false)) {
+                  if (selectedAddressId == null &&
+                      (address.isDefault ?? false)) {
                     selectedAddressId = address.id;
                   }
 
                   return AddressCard(
+                    onDelete: () async {
+                      final success = await ref
+                          .read(billingAddressProvider.notifier)
+                          .deleteAddress(address.id!);
+                      if (success) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Address deleted successfully"),
+                          ),
+                        );
+                      }
+                    },
                     label: address.label?.toUpperCase() ?? "ADDRESS",
                     name: address.recipientName ?? "No Name",
                     phone: address.phone ?? "",
-                    address: "${address.address}, ${address.upazila?.name}, ${address.district?.name}",
+                    address:
+                        "${address.address}, ${address.upazila?.name}, ${address.district?.name}, ${address.division?.name}",
                     isDefault: address.isDefault ?? false,
                     isSelected: selectedAddressId == address.id,
                     onTap: () => setState(() => selectedAddressId = address.id),
@@ -195,6 +257,7 @@ class _BillingAddressState extends ConsumerState<BillingAddress> {
             ),
             const SizedBox(height: 10),
             TextField(
+              controller: _remarkController,
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: "Type your external note here...",
@@ -211,8 +274,31 @@ class _BillingAddressState extends ConsumerState<BillingAddress> {
               ),
             ),
 
+            const SizedBox(height: 20),
+
+            _buildInfoCard(
+              context,
+              value: sameAsDefaultBilling,
+              title: "Shipping address is the same as default billing",
+              subtitle:
+                  "Simplify your delivery process by using one unified address.",
+              onChanged: (val) => setState(() => sameAsDefaultBilling = val!),
+            ),
+
+            const SizedBox(height: 12),
+
+            _buildInfoCard(
+              context,
+              value: saveInformation,
+              title: "Save this information for next time",
+              subtitle:
+                  "Your checkout details will be encrypted and saved safely to your account.",
+              hasSecureBadge: true,
+              onChanged: (val) => setState(() => saveInformation = val!),
+            ),
+
             const SizedBox(height: 30),
-           
+
             PaymentDetailsSection(
               shipping: shipping,
               subtotal: subtotal,
@@ -229,8 +315,91 @@ class _BillingAddressState extends ConsumerState<BillingAddress> {
         ),
       ),
       bottomSheet: BottomPayButton(
-        totalAmount: totalAmount, 
-        onPressed: () {},
+        totalAmount: totalAmount,
+        onPressed: paymentStatus.isloading ? () {} : _handlePayment,
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(
+    BuildContext context, {
+    required bool value,
+    required String title,
+    required String subtitle,
+    required ValueChanged<bool?> onChanged,
+    bool hasSecureBadge = false,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 24,
+            width: 24,
+            child: Checkbox(
+              value: value,
+              onChanged: onChanged,
+              activeColor: const Color(0xFF00A86B),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF002233),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    if (hasSecureBadge) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE8F5E9),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          "SECURE",
+                          style: TextStyle(
+                            color: Color(0xFF00A86B),
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: const TextStyle(color: Colors.blueGrey, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

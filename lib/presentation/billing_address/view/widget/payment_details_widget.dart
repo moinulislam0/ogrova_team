@@ -79,7 +79,7 @@ class _PaymentDetailsSectionState extends State<PaymentDetailsSection> {
       if (response is Map && response['success'] == true) {
         final data = response['data'] ?? {};
 
-        // এখানে পরিবর্তন: 'percent' অথবা 'percentage' দুইটাই চেক করা হয়েছে
+      
         final String type = data['discount_type']?.toString() ?? 'fixed';
         final double discountVal =
             double.tryParse(data['discount']?.toString() ?? '0') ?? 0;
@@ -87,11 +87,11 @@ class _PaymentDetailsSectionState extends State<PaymentDetailsSection> {
         double finalDiscount = 0;
 
         if (type == 'percent' || type == 'percentage') {
-          // পারসেন্টেজ হলে সাবটোটাল থেকে হিসাব হবে
+  
           finalDiscount = (widget.subtotal * discountVal) / 100;
           setState(() => _discountPercent = discountVal);
         } else {
-          // ফিক্সড হলে সরাসরি ওই টাকাটা ডিসকাউন্ট হবে
+      
           finalDiscount = discountVal;
           setState(() => _discountPercent = null);
         }
@@ -121,7 +121,7 @@ class _PaymentDetailsSectionState extends State<PaymentDetailsSection> {
     }
   }
 
-  // বাকি কোড (showMessage, build, _money, _row) একই থাকবে...
+
   void _showMessage(String message, {bool isError = true}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

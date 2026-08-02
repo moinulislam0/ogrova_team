@@ -4,6 +4,7 @@ class AddressCard extends StatelessWidget {
   final String label, name, phone, address;
   final bool isDefault, isSelected;
   final VoidCallback onTap;
+  final VoidCallback onDelete;
 
   const AddressCard({
     super.key,
@@ -14,6 +15,7 @@ class AddressCard extends StatelessWidget {
     required this.isDefault,
     required this.isSelected,
     required this.onTap,
+    required this.onDelete,
   });
 
   @override
@@ -50,7 +52,7 @@ class AddressCard extends StatelessWidget {
                     label,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                      fontSize: 14,
                       color: colors.onSurfaceVariant,
                     ),
                   ),
@@ -108,16 +110,23 @@ class AddressCard extends StatelessWidget {
               address,
               style: TextStyle(
                 color: colors.onSurface,
-                fontSize: 13,
+                fontSize: 14,
                 height: 1.4,
               ),
             ),
             Align(
               alignment: Alignment.bottomRight,
-              child: Icon(
-                Icons.delete_outline,
-                color: Colors.blueGrey[200],
-                size: 20,
+              child: GestureDetector(
+                
+                onTap: onDelete,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Icon(
+                    Icons.delete_outline,
+                    color: Colors.red[300], 
+                    size: 22,
+                  ),
+                ),
               ),
             ),
           ],
