@@ -1,22 +1,35 @@
+import 'dart:io'; // এটি যোগ করা হয়েছে File ব্যবহারের জন্য
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ogrova_team/presentation/profile_screen/viewModel/order_details_provider.dart';
+
+final selectedImageProvider = StateProvider<XFile?>((ref) => null);
 
 const Color kPrimary = Color(0xFF00A86B);
 
 class PremiumProfileHeader extends ConsumerWidget {
   const PremiumProfileHeader({super.key});
 
-  Future<void> _pickImage() async {
+
+  Future<void> _pickImage(WidgetRef ref) async {
     final ImagePicker picker = ImagePicker();
-    await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+   
+      ref.read(selectedImageProvider.notifier).state = image;
+    }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(orderDetailsProvider);
     final user = state.data?.data?.data?.firstOrNull?.user;
+
+    
+    final localImage = ref.watch(selectedImageProvider);
 
     return Container(
       padding: const EdgeInsets.all(22),
@@ -40,7 +53,7 @@ class PremiumProfileHeader extends ConsumerWidget {
           Row(
             children: [
               GestureDetector(
-                onTap: _pickImage,
+                onTap: () => _pickImage(ref), 
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -58,8 +71,13 @@ class PremiumProfileHeader extends ConsumerWidget {
                     CircleAvatar(
                       radius: 38,
                       backgroundColor: const Color(0xFF334155),
-                      backgroundImage: user?.photo != null ? NetworkImage(user!.photo!) : null,
-                      child: user?.photo == null
+                    
+                      backgroundImage: localImage != null
+                          ? FileImage(File(localImage.path)) as ImageProvider
+                          : (user?.photo != null
+                                ? NetworkImage(user!.photo!)
+                                : null),
+                      child: (localImage == null && user?.photo == null)
                           ? Text(
                               user?.name?.substring(0, 1).toUpperCase() ?? 'A',
                               style: const TextStyle(
@@ -96,7 +114,7 @@ class PremiumProfileHeader extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      user?.name ?? "Admin One",
+                      user?.name ?? "User name",
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -106,7 +124,7 @@ class PremiumProfileHeader extends ConsumerWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      user?.email ?? "admin1@gmail.com",
+                      user?.email ?? "user@gmail.com",
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.75),
                         fontSize: 13,
@@ -115,9 +133,17 @@ class PremiumProfileHeader extends ConsumerWidget {
                     const SizedBox(height: 10),
                     Row(
                       children: [
-                        _buildStatusBadge(user?.isProfileCompleted == 1 ? "VERIFIED" : "UNVERIFIED", Colors.orangeAccent),
+                        _buildStatusBadge(
+                          user?.isProfileCompleted == 1
+                              ? "VERIFIED"
+                              : "UNVERIFIED",
+                          Colors.orangeAccent,
+                        ),
                         const SizedBox(width: 8),
-                        _buildStatusBadge(user?.isActive == true ? "ACTIVE" : "INACTIVE", kPrimary),
+                        _buildStatusBadge(
+                          user?.isActive == true ? "ACTIVE" : "INACTIVE",
+                          kPrimary,
+                        ),
                       ],
                     ),
                   ],

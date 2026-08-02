@@ -181,9 +181,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   prefixIcon: const Icon(Icons.lock_outline, size: 20),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscureText
-                          ? Icons.visibility_outlined
-                          : Icons.visibility,
+                      _obscureText ? Icons.visibility_off : Icons.visibility,
                       size: 20,
                     ),
                     onPressed: () =>
@@ -315,7 +313,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       );
                     }, // Navigate to Register
                     child: const Text(
-                      "Register",
+                      "Create Account",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
