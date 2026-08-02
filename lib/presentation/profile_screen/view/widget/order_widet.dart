@@ -20,14 +20,12 @@ class _OrderDetailsScreenState extends ConsumerState<OrderDetailsScreen> {
     Future.microtask(() => ref.read(orderDetailsProvider.notifier).getdata());
   }
 
-  // ডেট ফরম্যাট করার ফাংশন - এখানে N/A এর বদলে Pending করা হয়েছে
   String formatDate(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return "Pending";
     try {
       DateTime dt = DateTime.parse(dateStr);
       return DateFormat('dd MMM yyyy').format(dt);
     } catch (e) {
-      // যদি স্ট্রিংটি ডেট না হয় তবে যা আছে তাই দেখাবে অথবা স্লিট করে তারিখ নিবে
       return dateStr.contains('T') ? dateStr.split('T')[0] : dateStr;
     }
   }
@@ -128,7 +126,7 @@ class _OrderDetailsScreenState extends ConsumerState<OrderDetailsScreen> {
                             _infoItem(
                               context,
                               "Order Date",
-                              formatDate(order.date),
+                              formatDate(order.createdAt),
                             ),
                             _infoItem(
                               context,

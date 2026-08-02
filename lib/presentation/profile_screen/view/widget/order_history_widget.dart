@@ -211,7 +211,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                                     Flexible(
                                       child: _infoChip(
                                         Icons.calendar_today_outlined,
-                                        formatDate(order.date),
+                                        formatDate(order.createdAt),
                                       ),
                                     ),
                                     const SizedBox(width: 12),
