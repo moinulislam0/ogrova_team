@@ -15,9 +15,11 @@ class ApiEndpoints {
    static const String upazilas = 'api/public/get-upazila';
    static const String policeStations = 'api/public/get-police-station';
    static String productsDetails(String slug) =>
-       'api/public/product/${slug}';
+       'api/public/product/$slug';
    static const String addToCart = 'api/cart/add-to-cart';
    static const String  shoppingCart= 'api/cart';
+   static const String  billingAddress = 'api/customer/addresses/get';
+   static const String couponCheck = 'api/coupon/check';
    static String updateCartQuantity(String reg, int productId, int variantId) =>
        'api/cart/qty-update/$reg/$productId/$variantId';
    static String deleteCart(int cartId, String reg, int productId, int variantId) =>

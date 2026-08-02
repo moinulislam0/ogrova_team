@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // Riverpod ইম্পোর্ট করা হয়েছে
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrova_team/core/resource/constant/color_manager.dart';
-import 'package:ogrova_team/presentation/add_to-cart/viewModel/shopping_cart_provider.dart'; // Provider ইম্পোর্ট করা হয়েছে
+import 'package:ogrova_team/presentation/add_to-cart/viewModel/shopping_cart_provider.dart';
 import 'package:ogrova_team/presentation/billing_address/view/screen/add_new_address.dart';
 import 'package:ogrova_team/presentation/billing_address/view/widget/address_card_widget.dart';
 import 'package:ogrova_team/presentation/billing_address/view/widget/custom_pay_button_widget.dart';
 import 'package:ogrova_team/presentation/billing_address/view/widget/payment_details_widget.dart';
 
-class BillingAddress extends ConsumerStatefulWidget { // StatefulWidget থেকে ConsumerStatefulWidget এ পরিবর্তন
+import 'package:ogrova_team/presentation/billing_address/viewModel/billing_address_provider.dart';
+
+class BillingAddress extends ConsumerStatefulWidget {
   final String reg;
   const BillingAddress({super.key, required this.reg});
 
@@ -16,27 +18,40 @@ class BillingAddress extends ConsumerStatefulWidget { // StatefulWidget থে�
 }
 
 class _BillingAddressState extends ConsumerState<BillingAddress> {
-  int selectedAddress = 1; // Default selected address index
+  int? selectedAddressId;
   String selectedPayment = "cod";
+  double couponDiscount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() => ref.read(billingAddressProvider.notifier).getPublicProducts());
+  }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(shoppingCartProvider);
+    final addressState = ref.watch(billingAddressProvider);
+
     final cartItems = state.data?.data ?? [];
+    final addresses = addressState.data?.data ?? [];
 
     double subtotal = 0;
     int totalPoints = 0;
     for (var item in cartItems) {
       subtotal += item.totalPayableAmount;
-    
       totalPoints += item.totalPoints;
     }
-    
-    double tax = 0.0; 
-    double shipping = 0.0;
 
-   
-    double totalAmount = subtotal + tax + shipping;
+    const double tax = 0.0;
+    final double shipping = double.tryParse(
+          addresses.isNotEmpty ? addresses.first.deliveryCharge ?? '' : '',
+        ) ??
+        0;
+    final double totalAmount = (subtotal + tax + shipping - couponDiscount)
+        .clamp(0, double.infinity)
+        .toDouble();
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -59,7 +74,6 @@ class _BillingAddressState extends ConsumerState<BillingAddress> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Billing Address Title
             RichText(
               text: TextSpan(
                 style: TextStyle(
@@ -80,7 +94,6 @@ class _BillingAddressState extends ConsumerState<BillingAddress> {
             ),
             const SizedBox(height: 20),
 
-            // Shipping Address Header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -109,27 +122,32 @@ class _BillingAddressState extends ConsumerState<BillingAddress> {
               ],
             ),
 
-            // Address Cards
-            AddressCard(
-              label: "HOME",
-              name: "Samim Hossain",
-              phone: "01712345678",
-              address:
-                  "House #12, Road #5, Dhanmondi, Demra, Debidwar, Comilla, Chattagram - 1209",
-              isDefault: true,
-              isSelected: selectedAddress == 0,
-              onTap: () => setState(() => selectedAddress = 0),
-            ),
-            AddressCard(
-              label: "OFFICE",
-              name: "Samim Hossain",
-              phone: "01812345678",
-              address:
-                  "Level 5, Business Center, Banani, Dhaka Cantt., Barura, Comilla, Chattagram - 1213",
-              isDefault: false,
-              isSelected: selectedAddress == 1,
-              onTap: () => setState(() => selectedAddress = 1),
-            ),
+            if (addressState.isLoading)
+              const Center(child: CircularProgressIndicator())
+            else if (addresses.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Text("No saved addresses found."),
+              )
+            else
+              Column(
+                children: List.generate(addresses.length, (index) {
+                  final address = addresses[index];
+                  if (selectedAddressId == null && (address.isDefault ?? false)) {
+                    selectedAddressId = address.id;
+                  }
+
+                  return AddressCard(
+                    label: address.label?.toUpperCase() ?? "ADDRESS",
+                    name: address.recipientName ?? "No Name",
+                    phone: address.phone ?? "",
+                    address: "${address.address}, ${address.upazila?.name}, ${address.district?.name}",
+                    isDefault: address.isDefault ?? false,
+                    isSelected: selectedAddressId == address.id,
+                    onTap: () => setState(() => selectedAddressId = address.id),
+                  );
+                }),
+              ),
 
             const SizedBox(height: 20),
             const Text(
@@ -141,7 +159,6 @@ class _BillingAddressState extends ConsumerState<BillingAddress> {
             ),
             const SizedBox(height: 10),
 
-            // Payment Card
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -197,20 +214,23 @@ class _BillingAddressState extends ConsumerState<BillingAddress> {
             const SizedBox(height: 30),
            
             PaymentDetailsSection(
-              shipping: shipping.toString(),
-              subtotal: subtotal.toString(),
-              totalPoints: totalPoints.toDouble().toString(),
-              tax: tax.toString(),
+              shipping: shipping,
+              subtotal: subtotal,
+              totalPoints: totalPoints.toDouble(),
+              tax: tax,
+              discountAmount: couponDiscount,
+              totalAmount: totalAmount,
+              onDiscountChanged: (discount) {
+                setState(() => couponDiscount = discount);
+              },
             ),
-            const SizedBox(height: 200), // Space for bottom button
+            const SizedBox(height: 200),
           ],
         ),
       ),
       bottomSheet: BottomPayButton(
         totalAmount: totalAmount, 
-        onPressed: () {
-        
-        },
+        onPressed: () {},
       ),
     );
   }
@@ -223,6 +243,8 @@ class _BillingAddressState extends ConsumerState<BillingAddress> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => const AddAddressModal(),
-    );
+    ).then((value) {
+      ref.read(billingAddressProvider.notifier).getPublicProducts();
+    });
   }
 }

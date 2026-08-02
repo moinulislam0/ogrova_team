@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ogrova_team/data/models/billing_address_model.dart';
 import 'package:ogrova_team/presentation/billing_address/view/screen/billing_address.dart';
+
 
 class OrderSummaryCard extends StatelessWidget {
   final double subtotal;
@@ -145,7 +147,7 @@ class OrderSummaryCard extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BillingAddress(reg: reg),
+                          builder: (context) => BillingAddress(reg: reg,)
                         ),
                       );
                     },
