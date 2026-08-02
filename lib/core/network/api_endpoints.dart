@@ -9,6 +9,11 @@ class ApiEndpoints {
    static const String logout = 'api/auth/logout';
    //products
    static const String publicProducts = 'api/public/products';
+   static const String addressCreate = 'api/customer/addresses/create';
+   static const String divisions = 'api/public/get-division';
+   static const String districts = 'api/public/get-district';
+   static const String upazilas = 'api/public/get-upazila';
+   static const String policeStations = 'api/public/get-police-station';
    static String productsDetails(String slug) =>
        'api/public/product/${slug}';
    static const String addToCart = 'api/cart/add-to-cart';
