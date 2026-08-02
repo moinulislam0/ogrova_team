@@ -1,16 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // Riverpod ইম্পোর্ট করা হয়েছে
+import 'package:ogrova_team/presentation/profile_screen/viewModel/order_details_provider.dart';
 
 const Color kPrimary = Color(0xFF00A86B);
 const Color kPrimaryDark = Color(0xFF008C5A);
-const Color kBg = Color(0xFFF1F5F9);
-const Color kTextDark = Color(0xFF0F172A);
-const Color kTextMuted = Color(0xFF64748B);
 
-class PremiumPersonalInfoForm extends StatelessWidget {
+class PremiumPersonalInfoForm extends ConsumerStatefulWidget {
   const PremiumPersonalInfoForm({super.key});
 
   @override
+  ConsumerState<PremiumPersonalInfoForm> createState() =>
+      _PremiumPersonalInfoFormState();
+}
+
+class _PremiumPersonalInfoFormState
+    extends ConsumerState<PremiumPersonalInfoForm> {
+  late TextEditingController nameController;
+  late TextEditingController phoneController;
+  late TextEditingController emailController;
+  late TextEditingController addressController;
+
+  String? selectedGender;
+  String? selectedBloodGroup;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController();
+    phoneController = TextEditingController();
+    emailController = TextEditingController();
+    addressController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    phoneController.dispose();
+    emailController.dispose();
+    addressController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final state = ref.watch(orderDetailsProvider);
+    final user = state.data?.data?.data?.firstOrNull?.user;
+
+    if (user != null && nameController.text.isEmpty) {
+      nameController.text = user.name ?? "";
+      phoneController.text = user.phone ?? "";
+      emailController.text = user.email ?? "";
+      addressController.text = user.presentAddress ?? "";
+      selectedGender = user.gender;
+      selectedBloodGroup = user.bloodGroup;
+    }
+
     final colors = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(20),
@@ -31,7 +75,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
             context,
             label: "Full Name",
             hintText: "Enter your full name",
-
+            controller: nameController,
             icon: Icons.person_outline_rounded,
           ),
           const SizedBox(height: 16),
@@ -41,7 +85,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
             context,
             label: "Phone Number",
             hintText: "e.g. 017XXXXXXXX",
-
+            controller: phoneController,
             icon: Icons.phone_outlined,
           ),
           const SizedBox(height: 16),
@@ -51,7 +95,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
             context,
             label: "Email Address",
             hintText: "Enter your email address",
-
+            controller: emailController,
             icon: Icons.email_outlined,
           ),
           const SizedBox(height: 16),
@@ -60,25 +104,23 @@ class PremiumPersonalInfoForm extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _buildDropdownField(context, "Gender", [
-                  "Select",
-                  "Male",
-                  "Female",
-                ]),
+                child: _buildDropdownField(
+                  context,
+                  "Gender",
+                  ["Select", "Male", "Female"],
+                  currentValue: selectedGender,
+                  onChanged: (val) => setState(() => selectedGender = val),
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _buildDropdownField(context, "Blood Group", [
-                  "Select",
-                  "A+",
-                  "B+",
-                  "O+",
-                  "AB+",
-                  "A-",
-                  "B-",
-                  "O-",
-                  "AB-",
-                ]),
+                child: _buildDropdownField(
+                  context,
+                  "Blood Group",
+                  ["Select", "A+", "B+", "O+", "AB+", "A-", "B-", "O-", "AB-"],
+                  currentValue: selectedBloodGroup,
+                  onChanged: (val) => setState(() => selectedBloodGroup = val),
+                ),
               ),
             ],
           ),
@@ -89,7 +131,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
             context,
             label: "Present Address",
             hintText: "House, Road, Area details...",
-
+            controller: addressController,
             icon: Icons.location_on_outlined,
             maxLines: 2,
           ),
@@ -102,7 +144,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
     BuildContext context, {
     required String label,
     required String hintText,
-
+    required TextEditingController controller,
     required IconData icon,
     int maxLines = 1,
   }) {
@@ -120,6 +162,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         TextFormField(
+          controller: controller,
           maxLines: maxLines,
           style: TextStyle(
             fontSize: 14,
@@ -160,9 +203,16 @@ class PremiumPersonalInfoForm extends StatelessWidget {
   Widget _buildDropdownField(
     BuildContext context,
     String label,
-    List<String> items,
-  ) {
+    List<String> items, {
+    String? currentValue,
+    required Function(String?) onChanged,
+  }) {
     final colors = Theme.of(context).colorScheme;
+
+    String? effectiveValue = items.contains(currentValue)
+        ? currentValue
+        : items.first;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -176,7 +226,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         DropdownButtonFormField<String>(
-          value: items.first,
+          value: effectiveValue,
           items: items
               .map(
                 (e) => DropdownMenuItem(
@@ -188,7 +238,7 @@ class PremiumPersonalInfoForm extends StatelessWidget {
                 ),
               )
               .toList(),
-          onChanged: (val) {},
+          onChanged: onChanged,
           icon: Icon(
             Icons.keyboard_arrow_down_rounded,
             color: colors.onSurfaceVariant,

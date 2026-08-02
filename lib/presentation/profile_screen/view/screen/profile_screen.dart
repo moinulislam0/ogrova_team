@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrova_team/core/network/api_clients.dart';
 import 'package:ogrova_team/core/network/api_endpoints.dart';
 import 'package:ogrova_team/data/sources/local/shared_preference/shared_prefenrence.dart';
@@ -15,28 +16,30 @@ import 'package:ogrova_team/presentation/profile_screen/view/widget/privacy_widg
 import 'package:ogrova_team/presentation/profile_screen/view/widget/security_widget.dart';
 import 'package:ogrova_team/presentation/profile_screen/view/widget/star_card_widget.dart';
 import 'package:ogrova_team/presentation/profile_screen/view/widget/theme_widget.dart';
+import 'package:ogrova_team/presentation/profile_screen/viewModel/order_details_provider.dart';
 
-// ==================== PRIMARY COLOR ====================
 const Color kPrimary = Color(0xFF00A86B);
 const Color kPrimaryDark = Color(0xFF008C5A);
-const Color kBg = Color(0xFFF1F5F9);
-const Color kTextDark = Color(0xFF0F172A);
-const Color kTextMuted = Color(0xFF64748B);
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => ref.read(orderDetailsProvider.notifier).getdata());
+  }
+
   Future<void> _logout() async {
     try {
       await ApiClient().postRequest(endpoints: ApiEndpoints.logout);
     } catch (_) {
     } finally {
-      
       await SharedPreferenceData.removeToken();
       await ApiClient.headerSet();
 
@@ -51,6 +54,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(orderDetailsProvider);
+    final userData = state.data?.data?.data?.firstOrNull?.user;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -82,7 +88,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () =>
+                  ref.read(orderDetailsProvider.notifier).getdata(),
               icon: Icon(
                 Icons.refresh_rounded,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -100,18 +107,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 24),
 
             // Stats
-            const Row(
+            Row(
               children: [
                 Expanded(
                   child: PremiumStatCard(
                     label: "Orders",
-                    value: "2",
+                    value: "${state.data?.data?.total ?? 0}",
                     icon: Icons.shopping_bag_outlined,
                     gradientColors: [Color(0xFF3B82F6), Color(0xFF1D4ED8)],
                   ),
                 ),
-                SizedBox(width: 12),
-                Expanded(
+                const SizedBox(width: 12),
+                const Expanded(
                   child: PremiumStatCard(
                     label: "Reviews",
                     value: "0",
@@ -119,11 +126,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     gradientColors: [Color(0xFFF59E0B), Color(0xFFD97706)],
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: PremiumStatCard(
                     label: "Points",
-                    value: "120",
+                    value: "${state.data?.data?.data?.first.point ?? 0}",
                     icon: Icons.workspace_premium_outlined,
                     gradientColors: [kPrimary, kPrimaryDark],
                   ),
@@ -251,7 +258,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Icons.logout,
                     title: "LogOut",
                     iconBg: CupertinoColors.destructiveRed,
-                    iconColor: const Color(0xFF475569),
+                    iconColor: Colors.white,
                     onTap: _logout,
                   ),
                 ],

@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:ogrova_team/presentation/profile_screen/viewModel/order_details_provider.dart';
+
 const Color kPrimary = Color(0xFF00A86B);
-const Color kPrimaryDark = Color(0xFF008C5A);
-const Color kBg = Color(0xFFF1F5F9);
-const Color kTextDark = Color(0xFF0F172A);
-const Color kTextMuted = Color(0xFF64748B);
-class PremiumProfileHeader extends StatelessWidget {
+
+class PremiumProfileHeader extends ConsumerWidget {
   const PremiumProfileHeader({super.key});
 
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    await picker.pickImage(source: ImageSource.gallery);
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(orderDetailsProvider);
+    final user = state.data?.data?.data?.firstOrNull?.user;
+
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
@@ -30,59 +39,65 @@ class PremiumProfileHeader extends StatelessWidget {
         children: [
           Row(
             children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: 84,
-                    height: 84,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.25),
-                        width: 3,
-                      ),
-                    ),
-                  ),
-                  const CircleAvatar(
-                    radius: 38,
-                    backgroundColor: Color(0xFF334155),
-                    child: Text(
-                      'A',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
+              GestureDetector(
+                onTap: _pickImage,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: 84,
+                      height: 84,
                       decoration: BoxDecoration(
-                        color: kPrimary,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
-                      ),
-                      child: const Icon(
-                        Icons.camera_alt_rounded,
-                        size: 14,
-                        color: Colors.white,
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.25),
+                          width: 3,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    CircleAvatar(
+                      radius: 38,
+                      backgroundColor: const Color(0xFF334155),
+                      backgroundImage: user?.photo != null ? NetworkImage(user!.photo!) : null,
+                      child: user?.photo == null
+                          ? Text(
+                              user?.name?.substring(0, 1).toUpperCase() ?? 'A',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 30,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            )
+                          : null,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: kPrimary,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: const Icon(
+                          Icons.camera_alt_rounded,
+                          size: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Admin One",
-                      style: TextStyle(
+                    Text(
+                      user?.name ?? "Admin One",
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -91,7 +106,7 @@ class PremiumProfileHeader extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      "admin1@gmail.com",
+                      user?.email ?? "admin1@gmail.com",
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.75),
                         fontSize: 13,
@@ -100,9 +115,9 @@ class PremiumProfileHeader extends StatelessWidget {
                     const SizedBox(height: 10),
                     Row(
                       children: [
-                        _buildStatusBadge("UNVERIFIED", Colors.redAccent),
+                        _buildStatusBadge(user?.isProfileCompleted == 1 ? "VERIFIED" : "UNVERIFIED", Colors.orangeAccent),
                         const SizedBox(width: 8),
-                        _buildStatusBadge("ACTIVE", kPrimary),
+                        _buildStatusBadge(user?.isActive == true ? "ACTIVE" : "INACTIVE", kPrimary),
                       ],
                     ),
                   ],
@@ -130,9 +145,9 @@ class PremiumProfileHeader extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const Text(
-                      "44%",
-                      style: TextStyle(
+                    Text(
+                      "${user?.isProfileCompleted ?? 0}%",
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF6EE7B7),
                         fontSize: 13,
@@ -144,7 +159,7 @@ class PremiumProfileHeader extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: LinearProgressIndicator(
-                    value: 0.44,
+                    value: (user?.isProfileCompleted ?? 0) / 100,
                     minHeight: 6,
                     backgroundColor: Colors.white.withOpacity(0.15),
                     valueColor: const AlwaysStoppedAnimation<Color>(
