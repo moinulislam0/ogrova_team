@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrova_team/data/models/address_location_model.dart';
 import 'package:ogrova_team/presentation/billing_address/viewModel/address_location_provider.dart';
-import 'package:ogrova_team/presentation/billing_address/viewModel/create_address_provider.dart'; // Provider ইম্পোর্ট
+import 'package:ogrova_team/presentation/billing_address/viewModel/create_address_provider.dart';
 
 class AddAddressModal extends ConsumerStatefulWidget {
   const AddAddressModal({super.key});
@@ -12,20 +12,20 @@ class AddAddressModal extends ConsumerStatefulWidget {
 }
 
 class _AddAddressModalState extends ConsumerState<AddAddressModal> {
-  final _formKey = GlobalKey<FormState>(); // FormKey যুক্ত করা হয়েছে
+  final _formKey = GlobalKey<FormState>();
 
-  // Controllers যুক্ত করা হয়েছে
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _postCodeController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
 
-  String selectedLabel = 'HOME';
+  // ১. লেবেল 'Home' (Title Case) করা হলো যা API গ্রহণ করে
+  String selectedLabel = 'Home';
   int? selectedDivisionId;
   int? selectedDistrictId;
   int? selectedUpazilaId;
   int? selectedPoliceStationId;
-  bool isDefaultAddress = false; // Checkbox এর জন্য
+  bool isDefaultAddress = false;
 
   @override
   void initState() {
@@ -44,7 +44,6 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
     super.dispose();
   }
 
-  // API Call করার ফাংশন
   Future<void> _saveAddress() async {
     if (_formKey.currentState!.validate()) {
       if (selectedDivisionId == null ||
@@ -56,7 +55,9 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
         return;
       }
 
-      final success = await ref.read(createAddressProvider.notifier).crateAddress(
+      final success = await ref
+          .read(createAddressProvider.notifier)
+          .crateAddress(
             office: selectedLabel,
             recipientName: _nameController.text,
             phone: _phoneController.text,
@@ -86,23 +87,18 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
   @override
   Widget build(BuildContext context) {
     final locationState = ref.watch(addressLocationProvider);
-    final createStatus = ref.watch(createAddressProvider); // API status
+    final createStatus = ref.watch(createAddressProvider);
 
-    final districts = locationState.districts
-        .where((item) => item.divisionId == selectedDivisionId)
-        .toList();
-    final upazilas = locationState.upazilas
-        .where((item) => item.districtId == selectedDistrictId)
-        .toList();
-    final policeStations = locationState.policeStations
-        .where((item) => item.upazilaId == selectedUpazilaId)
-        .toList();
+    // ২. ড্রপডাউন সমস্যা সমাধানের জন্য সরাসরি লিস্ট ব্যবহার করা হলো
+    final districts = locationState.districts;
+    final upazilas = locationState.upazilas;
+    final policeStations = locationState.policeStations;
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
       padding: const EdgeInsets.all(20),
       child: Form(
-        key: _formKey, // FormKey ব্যবহার
+        key: _formKey,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +108,10 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
                 children: [
                   const Row(
                     children: [
-                      Icon(Icons.location_on_outlined, color: Color(0xFF00A86B)),
+                      Icon(
+                        Icons.location_on_outlined,
+                        color: Color(0xFF00A86B),
+                      ),
                       SizedBox(width: 8),
                       Text(
                         'ADD NEW SHIPPING ADDRESS',
@@ -132,7 +131,11 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
               const Divider(),
               const SizedBox(height: 15),
               _buildField('RECIPIENT NAME *', 'e.g. John ', _nameController),
-              _buildField('PHONE NUMBER *', 'e.g. 017XXXXXXXX', _phoneController),
+              _buildField(
+                'PHONE NUMBER *',
+                'e.g. 017XXXXXXXX',
+                _phoneController,
+              ),
               _buildDropdown(
                 label: 'DIVISION *',
                 hint: locationState.isLoading
@@ -141,19 +144,19 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
                 value: selectedDivisionId,
                 items: locationState.divisions,
                 enabled: !locationState.isLoading,
-              onChanged: (value) {
-                setState(() {
-                  selectedDivisionId = value;
-                  selectedDistrictId = null;
-                  selectedUpazilaId = null;
-                  selectedPoliceStationId = null;
-                });
-                if (value != null) {
-                  ref
-                      .read(addressLocationProvider.notifier)
-                      .loadDistricts(value);
-                }
-              },
+                onChanged: (value) {
+                  setState(() {
+                    selectedDivisionId = value;
+                    selectedDistrictId = null;
+                    selectedUpazilaId = null;
+                    selectedPoliceStationId = null;
+                  });
+                  if (value != null) {
+                    ref
+                        .read(addressLocationProvider.notifier)
+                        .loadDistricts(value);
+                  }
+                },
               ),
               _buildDropdown(
                 label: 'DISTRICT *',
@@ -161,18 +164,18 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
                 value: selectedDistrictId,
                 items: districts,
                 enabled: selectedDivisionId != null,
-              onChanged: (value) {
-                setState(() {
-                  selectedDistrictId = value;
-                  selectedUpazilaId = null;
-                  selectedPoliceStationId = null;
-                });
-                if (value != null) {
-                  ref
-                      .read(addressLocationProvider.notifier)
-                      .loadUpazilas(value);
-                }
-              },
+                onChanged: (value) {
+                  setState(() {
+                    selectedDistrictId = value;
+                    selectedUpazilaId = null;
+                    selectedPoliceStationId = null;
+                  });
+                  if (value != null) {
+                    ref
+                        .read(addressLocationProvider.notifier)
+                        .loadUpazilas(value);
+                  }
+                },
               ),
               _buildDropdown(
                 label: 'UPAZILA *',
@@ -180,17 +183,17 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
                 value: selectedUpazilaId,
                 items: upazilas,
                 enabled: selectedDistrictId != null,
-              onChanged: (value) {
-                setState(() {
-                  selectedUpazilaId = value;
-                  selectedPoliceStationId = null;
-                });
-                if (value != null) {
-                  ref
-                      .read(addressLocationProvider.notifier)
-                      .loadPoliceStations(value);
-                }
-              },
+                onChanged: (value) {
+                  setState(() {
+                    selectedUpazilaId = value;
+                    selectedPoliceStationId = null;
+                  });
+                  if (value != null) {
+                    ref
+                        .read(addressLocationProvider.notifier)
+                        .loadPoliceStations(value);
+                  }
+                },
               ),
               _buildDropdown(
                 label: 'POLICE STATION (OPTIONAL)',
@@ -210,7 +213,12 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
                     style: const TextStyle(color: Colors.red, fontSize: 12),
                   ),
                 ),
-              _buildField('POSTAL CODE (OPTIONAL)', 'e.g. 1200', _postCodeController, isRequired: false),
+              _buildField(
+                'POSTAL CODE (OPTIONAL)',
+                'e.g. 1200',
+                _postCodeController,
+                isRequired: false,
+              ),
               const Text(
                 'ADDRESS LABEL',
                 style: TextStyle(
@@ -220,11 +228,13 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
                 ),
               ),
               const SizedBox(height: 10),
-              Row(children: [
-                _labelBtn('HOME'),
-                _labelBtn('OFFICE'),
-                _labelBtn('OTHER')
-              ]),
+              Row(
+                children: [
+                  _labelBtn('Home'),
+                  _labelBtn('Office'),
+                  _labelBtn('Other'),
+                ],
+              ),
               const SizedBox(height: 20),
               _buildField(
                 'STREET ADDRESS *',
@@ -264,7 +274,11 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF00A86B),
                       ),
-                      child: Text(createStatus.isloading ? 'Processing...' : 'SAVE ADDRESS'),
+                      child: Text(
+                        createStatus.isloading
+                            ? 'Processing...'
+                            : 'SAVE ADDRESS',
+                      ),
                     ),
                   ),
                 ],
@@ -278,6 +292,7 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
   }
 
   Widget _labelBtn(String text) {
+    // ৩. selectedLabel-এ এখন "Home", "Office" বা "Other" সেভ হবে।
     final isSelected = selectedLabel == text;
     return Expanded(
       child: GestureDetector(
@@ -289,29 +304,39 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
           decoration: BoxDecoration(
             color: isSelected ? const Color(0xFF00A86B) : Colors.white,
             borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.grey.shade300),
           ),
           child: Text(
-            text,
-            style:
-                TextStyle(color: isSelected ? Colors.white : Colors.blueGrey),
+            text.toUpperCase(), // বাটনে সব বড় হাতের দেখাবে
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.blueGrey,
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildField(String label, String hint, TextEditingController controller,
-      {int maxLines = 1, bool isRequired = true}) {
+  Widget _buildField(
+    String label,
+    String hint,
+    TextEditingController controller, {
+    int maxLines = 1,
+    bool isRequired = true,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueGrey,
+            ),
+          ),
           const SizedBox(height: 8),
           TextFormField(
             controller: controller,
@@ -326,8 +351,9 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
               hintText: hint,
               filled: true,
               fillColor: const Color(0xFFF8F9FA),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           ),
         ],
@@ -349,20 +375,26 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueGrey,
+            ),
+          ),
           const SizedBox(height: 8),
           DropdownButtonFormField<int>(
             value: value,
             isExpanded: true,
-            hint: Text(enabled ? hint : 'Select the previous location first'),
+            hint: Text(enabled ? hint : 'Select previous location'),
             items: items
-                .map((item) => DropdownMenuItem(
+                .map(
+                  (item) => DropdownMenuItem(
                     value: item.id,
-                    child: Text(item.name, overflow: TextOverflow.ellipsis)))
+                    child: Text(item.name, overflow: TextOverflow.ellipsis),
+                  ),
+                )
                 .toList(),
             onChanged: enabled ? onChanged : null,
             validator: (value) =>
@@ -370,8 +402,9 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
             decoration: InputDecoration(
               filled: true,
               fillColor: enabled ? const Color(0xFFF8F9FA) : Colors.grey[200],
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           ),
         ],
