@@ -1,33 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrova_team/presentation/home/view/widget/product_card.dart';
-import 'package:ogrova_team/presentation/home/viewModel/public_products_provider.dart'; 
+import 'package:ogrova_team/presentation/home/viewModel/get_categories_provider.dart';
+import 'package:ogrova_team/presentation/home/viewModel/public_products_provider.dart';
 
 class ProductGridView extends ConsumerWidget {
   const ProductGridView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final publicProductState = ref.watch(publicProducts);
+    final categoryProductState = ref.watch(getProductsProvider);
 
-    final productState = ref.watch(publicProducts);
-    
-  
-    if (productState.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+    // লজিক: ক্যাটাগরি প্রোডাক্ট নাল মানেই হলো ফিল্টার নেই
+    final bool isCategoryFiltered = categoryProductState.categoryProducts != null;
+
+    final bool isLoading = isCategoryFiltered
+        ? categoryProductState.isLoading
+        : publicProductState.isLoading;
+
+    final String? errorMessage = isCategoryFiltered
+        ? categoryProductState.errorMessage
+        : publicProductState.errorMessage;
+
+    // ডাটা পাথ সেট করা
+    final productList = isCategoryFiltered
+        ? (categoryProductState.categoryProducts?.products?.data ?? [])
+        : (publicProductState.data?.data?.data ?? []);
+
+    if (isLoading) {
+      return const SizedBox(
+        height: 250,
+        child: Center(child: CircularProgressIndicator()),
+      );
     }
 
-
-    if (productState.errorMessage != null) {
-      return Center(child: Text(productState.errorMessage!));
+    if (errorMessage != null) {
+      return Center(child: Text(errorMessage, style: const TextStyle(color: Colors.red)));
     }
 
-
-    final productList = productState.data?.data?.data ?? [];
     if (productList.isEmpty) {
-      return const Center(child: Text("No products found"));
+      return const SizedBox(
+        height: 150,
+        child: Center(child: Text("No products found")),
+      );
     }
 
-    
     return GridView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       shrinkWrap: true,
@@ -40,8 +58,7 @@ class ProductGridView extends ConsumerWidget {
       ),
       itemCount: productList.length,
       itemBuilder: (context, index) {
-        final product = productList[index];
-        return ProductCard(product: product); 
+        return ProductCard(product: productList[index]);
       },
     );
   }

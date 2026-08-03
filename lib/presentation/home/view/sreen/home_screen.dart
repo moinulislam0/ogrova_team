@@ -11,7 +11,6 @@ import 'package:ogrova_team/presentation/home/viewModel/public_products_provider
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
-
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
@@ -21,8 +20,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      ref.read(publicProducts.notifier).getPublicProducts();
-      ref.read(getProductsProvider.notifier).getPublicProducts();
+      ref.read(publicProducts.notifier).getPublicProducts(); 
+      ref.read(getProductsProvider.notifier).getPublicProducts(); 
     });
   }
 
@@ -30,51 +29,50 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final categoryState = ref.watch(getProductsProvider);
     final categories = categoryState.data?.data ?? [];
+
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       drawer: const Drawer(),
       appBar: const OgrovaAppBar(),
       body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
         child: Column(
           children: [
             const OgrovaSearchBar(),
             const HomeBanner(),
-
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
               child: Row(
                 children: [
-                  const CategoryItem(
+                  CategoryItem(
+                    id: 0,
                     title: "All",
-                    image: "assets/images/all_category.png",
+                    ontap: () {
+                      // এটি কল করলে ফিল্টার ক্লিয়ার হবে এবং সব প্রোডাক্ট শো করবে
+                      ref.read(getProductsProvider.notifier).clearCategoryProducts();
+                      ref.read(publicProducts.notifier).getPublicProducts();
+                    },
                   ),
-
-                  if (categoryState.isLoading)
+                  if (categoryState.isLoading && categories.isEmpty)
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
+                      child: CircularProgressIndicator(),
                     )
                   else
                     ...categories.map((category) {
                       return CategoryItem(
+                        id: category.id ?? 0,
                         title: category.name ?? "",
-                        image: category.image ?? "",
+                        ontap: () {
+                          ref.read(getProductsProvider.notifier).getProductsByCategory(category.id!);
+                        },
                       );
                     }).toList(),
                 ],
               ),
             ),
-
             const SectionHeader(title: "FEATURED PRODUCTS"),
-
             const ProductGridView(),
-
             const SizedBox(height: 30),
           ],
         ),

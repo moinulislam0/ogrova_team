@@ -4,7 +4,7 @@ import 'package:ogrova_team/data/models/public_products_model.dart';
 import 'package:ogrova_team/presentation/products_details/view/screen/products_details_screen.dart';
 
 class ProductCard extends StatelessWidget {
-  final Product product;
+  final dynamic  product;
   const ProductCard({super.key, required this.product});
 
   @override
