@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:ogrova_team/core/network/api_clients.dart';
 import 'package:ogrova_team/data/models/get_categories_model.dart';
@@ -24,13 +23,15 @@ class GetCategoriesState {
     String? errorMessage,
     GetCategoriesModel? data,
     GetCategoriesProductsModel? categoryProducts,
+    bool isClearing = false, 
   }) {
     return GetCategoriesState(
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage ?? this.errorMessage,
       data: data ?? this.data,
-      // এখানে লজিক পরিবর্তন করা হয়েছে যাতে null পাস করা যায়
-      categoryProducts: categoryProducts, 
+      categoryProducts: isClearing
+          ? null
+          : (categoryProducts ?? this.categoryProducts),
     );
   }
 }
@@ -39,56 +40,62 @@ class GetCategoriesProvider extends StateNotifier<GetCategoriesState> {
   final GetCategoriesRepository remote;
 
   GetCategoriesProvider({required this.remote})
-      : super(GetCategoriesState(isLoading: false));
+    : super(GetCategoriesState(isLoading: false));
+
 
   Future<bool> getPublicProducts() async {
-    state = state.copyWith(isLoading: true, errorMessage: null, categoryProducts: state.categoryProducts);
+    state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final response = await remote.getData();
-      state = state.copyWith(isLoading: false, data: response, categoryProducts: state.categoryProducts);
+      state = state.copyWith(isLoading: false, data: response);
       return true;
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: e.toString().replaceFirst('Exception: ', ''),
-        categoryProducts: state.categoryProducts
-      );
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
       return false;
     }
   }
+
 
   Future<bool> getProductsByCategory(int id) async {
-    state = state.copyWith(isLoading: true, errorMessage: null, categoryProducts: null);
+   
+    state = state.copyWith(
+      isLoading: true,
+      errorMessage: null,
+      isClearing: true,
+    );
     try {
       final response = await remote.getCategoryProducts(id);
-      state = state.copyWith(isLoading: false, categoryProducts: response);
+      state = state.copyWith(
+        isLoading: false,
+        categoryProducts: response,
+        isClearing: false,
+      );
       return true;
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: e.toString().replaceFirst('Exception: ', ''),
-        categoryProducts: null,
+        errorMessage: e.toString(),
+        isClearing: true,
       );
       return false;
     }
   }
 
-  // এটিই "All" বাটনের জন্য সমাধান
+ 
   void clearCategoryProducts() {
-    state = GetCategoriesState(
+    state = state.copyWith(
       isLoading: false,
       errorMessage: null,
-      data: state.data, 
-      categoryProducts: null, // এখানে সরাসরি null করে দেওয়া হয়েছে
+      isClearing: true,
     );
   }
 }
 
 final getProductsProvider =
     StateNotifierProvider<GetCategoriesProvider, GetCategoriesState>((ref) {
-  return GetCategoriesProvider(
-    remote: GetCategoriesRepository(
-      remoteService: GetcategoriesService(apiClient: ApiClient()),
-    ),
-  );
-});
+      return GetCategoriesProvider(
+        remote: GetCategoriesRepository(
+          remoteService: GetcategoriesService(apiClient: ApiClient()),
+        ),
+      );
+    });

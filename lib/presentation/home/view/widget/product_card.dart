@@ -73,7 +73,7 @@ class ProductCard extends StatelessWidget {
 
             const SizedBox(height: 5),
 
-            // ২. ইমেজ সেকশন
+           
             Expanded(
               child: Container(
                 width: double.infinity,

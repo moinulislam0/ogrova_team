@@ -16,12 +16,14 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  int selectedCategoryId = 0; 
+
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
-      ref.read(publicProducts.notifier).getPublicProducts(); 
-      ref.read(getProductsProvider.notifier).getPublicProducts(); 
+      ref.read(publicProducts.notifier).getPublicProducts();
+      ref.read(getProductsProvider.notifier).getPublicProducts();
     });
   }
 
@@ -42,33 +44,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
-              child: Row(
-                children: [
-                  CategoryItem(
-                    id: 0,
-                    title: "All",
-                    ontap: () {
-                      // এটি কল করলে ফিল্টার ক্লিয়ার হবে এবং সব প্রোডাক্ট শো করবে
-                      ref.read(getProductsProvider.notifier).clearCategoryProducts();
-                      ref.read(publicProducts.notifier).getPublicProducts();
-                    },
-                  ),
-                  if (categoryState.isLoading && categories.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: CircularProgressIndicator(),
-                    )
-                  else
-                    ...categories.map((category) {
-                      return CategoryItem(
-                        id: category.id ?? 0,
-                        title: category.name ?? "",
-                        ontap: () {
-                          ref.read(getProductsProvider.notifier).getProductsByCategory(category.id!);
-                        },
-                      );
-                    }).toList(),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  children: [
+                    CategoryItem(
+                      id: 0,
+                      title: "All",
+                      isSelected: selectedCategoryId == 0,
+                      ontap: () {
+                        setState(() => selectedCategoryId = 0);
+                        ref.read(getProductsProvider.notifier).clearCategoryProducts();
+                        ref.read(publicProducts.notifier).getPublicProducts();
+                      },
+                    ),
+                    if (categoryState.isLoading && categories.isEmpty)
+                      const CircularProgressIndicator()
+                    else
+                      ...categories.map((category) {
+                        return CategoryItem(
+                          id: category.id ?? 0,
+                          title: category.name ?? "",
+                          isSelected: selectedCategoryId == category.id,
+                          ontap: () {
+                            setState(() => selectedCategoryId = category.id!);
+                            ref.read(getProductsProvider.notifier).getProductsByCategory(category.id!);
+                          },
+                        );
+                      }).toList(),
+                  ],
+                ),
               ),
             ),
             const SectionHeader(title: "FEATURED PRODUCTS"),

@@ -12,18 +12,18 @@ class ProductGridView extends ConsumerWidget {
     final publicProductState = ref.watch(publicProducts);
     final categoryProductState = ref.watch(getProductsProvider);
 
-    // লজিক: ক্যাটাগরি প্রোডাক্ট নাল মানেই হলো ফিল্টার নেই
+ 
     final bool isCategoryFiltered = categoryProductState.categoryProducts != null;
 
-    final bool isLoading = isCategoryFiltered
-        ? categoryProductState.isLoading
+    final bool isLoading = isCategoryFiltered 
+        ? categoryProductState.isLoading 
         : publicProductState.isLoading;
 
-    final String? errorMessage = isCategoryFiltered
-        ? categoryProductState.errorMessage
+    final String? errorMessage = isCategoryFiltered 
+        ? categoryProductState.errorMessage 
         : publicProductState.errorMessage;
 
-    // ডাটা পাথ সেট করা
+   
     final productList = isCategoryFiltered
         ? (categoryProductState.categoryProducts?.products?.data ?? [])
         : (publicProductState.data?.data?.data ?? []);
@@ -42,7 +42,7 @@ class ProductGridView extends ConsumerWidget {
     if (productList.isEmpty) {
       return const SizedBox(
         height: 150,
-        child: Center(child: Text("No products found")),
+        child: Center(child: Text("No products found in this category")),
       );
     }
 

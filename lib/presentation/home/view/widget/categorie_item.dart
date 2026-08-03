@@ -4,36 +4,40 @@ import 'package:ogrova_team/core/resource/constant/color_manager.dart';
 class CategoryItem extends StatelessWidget {
   final String title;
   final int id;
-  final String? image;
+  final bool isSelected;
   final VoidCallback ontap;
 
   const CategoryItem({
     super.key,
     required this.title,
-    this.image,
     required this.id,
+    required this.isSelected,
     required this.ontap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: InkWell(
         onTap: ontap,
-        child: Column(
-          children: [
-          
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: ColorManager.primary,
-              ),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? ColorManager.primary : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected ? ColorManager.primary : Colors.grey.shade300,
             ),
-          ],
+          ),
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: isSelected ? Colors.white : Colors.black87,
+            ),
+          ),
         ),
       ),
     );
