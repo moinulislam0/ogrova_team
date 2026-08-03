@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ogrova_team/data/models/billing_address_model.dart';
 import 'package:ogrova_team/presentation/billing_address/view/screen/billing_address.dart';
-
 
 class OrderSummaryCard extends StatelessWidget {
   final double subtotal;
@@ -15,7 +13,8 @@ class OrderSummaryCard extends StatelessWidget {
     required this.subtotal,
     required this.points,
     this.isCheckingOut = false,
-    this.onCheckout, required this.reg,
+    this.onCheckout,
+    required this.reg,
   });
 
   @override
@@ -26,7 +25,7 @@ class OrderSummaryCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         border: Border.all(color: isDark ? Colors.white : Colors.grey),
-        color: colors.surface,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
@@ -147,7 +146,7 @@ class OrderSummaryCard extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BillingAddress(reg: reg,)
+                          builder: (context) => BillingAddress(reg: reg),
                         ),
                       );
                     },

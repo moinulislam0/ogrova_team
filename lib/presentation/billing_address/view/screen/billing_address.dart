@@ -80,7 +80,7 @@ class _BillingAddressState extends ConsumerState<BillingAddress> {
     final state = ref.watch(shoppingCartProvider);
     final addressState = ref.watch(billingAddressProvider);
     final paymentStatus = ref.watch(paymentMethodProvider);
-
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final cartItems = state.data?.data ?? [];
     final addresses = addressState.data?.data ?? [];
 
@@ -108,12 +108,12 @@ class _BillingAddressState extends ConsumerState<BillingAddress> {
         title: Text(
           "Checkout",
           style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
+            color: isDark ? Colors.white : Colors.black,
             fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0.5,
         leading: BackButton(color: Theme.of(context).colorScheme.onSurface),
       ),

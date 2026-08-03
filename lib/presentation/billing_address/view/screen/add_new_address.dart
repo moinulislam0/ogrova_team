@@ -19,7 +19,6 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
   final TextEditingController _postCodeController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
 
-  // ১. লেবেল 'Home' (Title Case) করা হলো যা API গ্রহণ করে
   String selectedLabel = 'Home';
   int? selectedDivisionId;
   int? selectedDistrictId;
@@ -88,8 +87,8 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
   Widget build(BuildContext context) {
     final locationState = ref.watch(addressLocationProvider);
     final createStatus = ref.watch(createAddressProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // ২. ড্রপডাউন সমস্যা সমাধানের জন্য সরাসরি লিস্ট ব্যবহার করা হলো
     final districts = locationState.districts;
     final upazilas = locationState.upazilas;
     final policeStations = locationState.policeStations;
@@ -106,7 +105,7 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Row(
+                  Row(
                     children: [
                       Icon(
                         Icons.location_on_outlined,
@@ -117,7 +116,7 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
                         'ADD NEW SHIPPING ADDRESS',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF002233),
+                          color: isDark ? Colors.white : Color(0xFF002233),
                         ),
                       ),
                     ],
@@ -275,6 +274,9 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
                         backgroundColor: const Color(0xFF00A86B),
                       ),
                       child: Text(
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
                         createStatus.isloading
                             ? 'Processing...'
                             : 'SAVE ADDRESS',
@@ -292,7 +294,7 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
   }
 
   Widget _labelBtn(String text) {
-    // ৩. selectedLabel-এ এখন "Home", "Office" বা "Other" সেভ হবে।
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelected = selectedLabel == text;
     return Expanded(
       child: GestureDetector(
@@ -307,10 +309,8 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
             border: Border.all(color: Colors.grey.shade300),
           ),
           child: Text(
-            text.toUpperCase(), // বাটনে সব বড় হাতের দেখাবে
-            style: TextStyle(
-              color: isSelected ? Colors.white : Colors.blueGrey,
-            ),
+            text.toUpperCase(),
+            style: TextStyle(color: isSelected ? Colors.white : Colors.black),
           ),
         ),
       ),
@@ -324,6 +324,7 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
     int maxLines = 1,
     bool isRequired = true,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: Column(
@@ -340,6 +341,7 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
           const SizedBox(height: 8),
           TextFormField(
             controller: controller,
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
             maxLines: maxLines,
             validator: (value) {
               if (isRequired && (value == null || value.isEmpty)) {
@@ -349,8 +351,9 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
             },
             decoration: InputDecoration(
               hintText: hint,
+              hintStyle: const TextStyle(color: Colors.grey),
               filled: true,
-              fillColor: const Color(0xFFF8F9FA),
+              fillColor: isDark ? Colors.grey[850] : const Color(0xFFF8F9FA),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -370,6 +373,7 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
     required ValueChanged<int?> onChanged,
     bool isRequired = true,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: Column(
@@ -387,12 +391,22 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
           DropdownButtonFormField<int>(
             value: value,
             isExpanded: true,
-            hint: Text(enabled ? hint : 'Select previous location'),
+            dropdownColor: isDark ? Colors.grey[900] : Colors.white,
+            hint: Text(
+              enabled ? hint : 'Select previous location',
+              style: const TextStyle(color: Colors.grey),
+            ),
             items: items
                 .map(
                   (item) => DropdownMenuItem(
                     value: item.id,
-                    child: Text(item.name, overflow: TextOverflow.ellipsis),
+                    child: Text(
+                      item.name,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
                   ),
                 )
                 .toList(),
@@ -401,7 +415,9 @@ class _AddAddressModalState extends ConsumerState<AddAddressModal> {
                 isRequired && value == null ? 'Selection required' : null,
             decoration: InputDecoration(
               filled: true,
-              fillColor: enabled ? const Color(0xFFF8F9FA) : Colors.grey[200],
+              fillColor: enabled
+                  ? (isDark ? Colors.grey[850] : const Color(0xFFF8F9FA))
+                  : Colors.grey[200],
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),

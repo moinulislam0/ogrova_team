@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart' as cs;
 import 'package:flutter/material.dart';
+import 'package:ogrova_team/core/resource/constant/image_manager.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeBanner extends StatefulWidget {
@@ -12,11 +13,14 @@ class HomeBanner extends StatefulWidget {
 class _HomeBannerState extends State<HomeBanner> {
   int activeIndex = 0;
 
+  // Carousel Controller definition
   final cs.CarouselSliderController controller = cs.CarouselSliderController();
 
   final List<String> bannerImages = [
-    'assets/images/ogrova_logo.png',
-    'assets/images/ogrova_logo.png',
+    ImageManager.slider1,
+    ImageManager.slider3,
+    ImageManager.slider2,
+    ImageManager.slider4,
   ];
 
   @override
@@ -32,12 +36,16 @@ class _HomeBannerState extends State<HomeBanner> {
                 carouselController: controller,
                 itemCount: bannerImages.length,
                 itemBuilder: (context, index, realIndex) {
+                  final imagePath = bannerImages[index]; // Get image from list
                   return Container(
-                    width: double.infinity,
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 2,
+                    ), // small gap
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
-                      image: const DecorationImage(
-                        image: AssetImage('assets/images/ogrova_logo.png'),
+                      image: DecorationImage(
+                        image: AssetImage(imagePath), // Fixed here
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -47,48 +55,47 @@ class _HomeBannerState extends State<HomeBanner> {
                   height: 180,
                   viewportFraction: 1,
                   autoPlay: true,
+                  autoPlayInterval: const Duration(seconds: 4),
                   onPageChanged: (index, reason) =>
                       setState(() => activeIndex = index),
                 ),
               ),
 
-              // Left Arrow
+              // Left Arrow - Previous Page
               Positioned(
                 left: 10,
-                child: CircleAvatar(
-                  backgroundColor: Colors.black.withOpacity(0.3),
-                  radius: 18,
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    icon: const Icon(
+                child: GestureDetector(
+                  onTap: () => controller.previousPage(),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.black.withOpacity(0.3),
+                    radius: 18,
+                    child: const Icon(
                       Icons.arrow_back_ios_new,
                       size: 16,
                       color: Colors.white,
                     ),
-                    onPressed: () => controller.previousPage(),
                   ),
                 ),
               ),
 
-              // Right Arrow
+              // Right Arrow - Next Page
               Positioned(
                 right: 10,
-                child: CircleAvatar(
-                  backgroundColor: Colors.black.withOpacity(0.3),
-                  radius: 18,
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    icon: const Icon(
+                child: GestureDetector(
+                  onTap: () => controller.nextPage(),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.black.withOpacity(0.3),
+                    radius: 18,
+                    child: const Icon(
                       Icons.arrow_forward_ios_rounded,
                       size: 16,
                       color: Colors.white,
                     ),
-                    onPressed: () => controller.nextPage(),
                   ),
                 ),
               ),
 
-              // Indicator
+              // Smooth Indicator
               Positioned(
                 bottom: 10,
                 child: AnimatedSmoothIndicator(

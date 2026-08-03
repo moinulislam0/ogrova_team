@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrova_team/presentation/home/view/widget/app_bar_widget.dart';
 import 'package:ogrova_team/presentation/home/view/widget/categorie_item.dart';
 import 'package:ogrova_team/presentation/home/view/widget/home_banner.dart';
+import 'package:ogrova_team/presentation/home/view/widget/loading_shimmer.dart';
 import 'package:ogrova_team/presentation/home/view/widget/product_grid_view.dart';
 import 'package:ogrova_team/presentation/home/view/widget/search_bar.dart';
 import 'package:ogrova_team/presentation/home/view/widget/section_header.dart';
@@ -16,7 +17,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int selectedCategoryId = 0; 
+  int selectedCategoryId = 0;
 
   @override
   void initState() {
@@ -33,7 +34,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final categories = categoryState.data?.data ?? [];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: const Drawer(),
       appBar: const OgrovaAppBar(),
       body: SingleChildScrollView(
@@ -54,12 +55,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       isSelected: selectedCategoryId == 0,
                       ontap: () {
                         setState(() => selectedCategoryId = 0);
-                        ref.read(getProductsProvider.notifier).clearCategoryProducts();
+                        ref
+                            .read(getProductsProvider.notifier)
+                            .clearCategoryProducts();
                         ref.read(publicProducts.notifier).getPublicProducts();
                       },
                     ),
                     if (categoryState.isLoading && categories.isEmpty)
-                      const CircularProgressIndicator()
+                      const LoadingShimmer()
                     else
                       ...categories.map((category) {
                         return CategoryItem(
@@ -68,7 +71,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           isSelected: selectedCategoryId == category.id,
                           ontap: () {
                             setState(() => selectedCategoryId = category.id!);
-                            ref.read(getProductsProvider.notifier).getProductsByCategory(category.id!);
+                            ref
+                                .read(getProductsProvider.notifier)
+                                .getProductsByCategory(category.id!);
                           },
                         );
                       }).toList(),

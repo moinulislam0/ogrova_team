@@ -36,7 +36,7 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
           Container(
@@ -100,6 +100,7 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
+                                    color: Colors.black,
                                   ),
                                 ),
                                 Text(
@@ -171,7 +172,7 @@ class _ShoppingCartScreenState extends ConsumerState<ShoppingCartScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),

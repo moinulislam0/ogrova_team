@@ -70,6 +70,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final signInState = ref.watch(signInViewModelProvider);
 
     return Scaffold(
@@ -125,6 +126,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _emailController,
+                style: TextStyle(color: isDark ? Colors.black : Colors.white),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty)
@@ -134,8 +136,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   return null;
                 },
                 decoration: InputDecoration(
+                  labelStyle: TextStyle(
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
                   hintText: "Enter your email",
-                  prefixIcon: const Icon(Icons.email_outlined, size: 20),
+                  prefixIcon: Icon(
+                    Icons.email_outlined,
+                    size: 20,
+                    color: isDark ? Colors.black : Colors.white,
+                  ),
                   filled: true,
                   fillColor: const Color(0xFFF8FAFC),
                   border: OutlineInputBorder(
@@ -168,6 +177,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _passwordController,
+                style: TextStyle(color: isDark ? Colors.black : Colors.white),
                 obscureText: _obscureText,
                 validator: (value) {
                   if (value == null || value.isEmpty)
@@ -177,12 +187,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   return null;
                 },
                 decoration: InputDecoration(
+                  labelStyle: TextStyle(
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+
                   hintText: "••••••••",
-                  prefixIcon: const Icon(Icons.lock_outline, size: 20),
+                  prefixIcon: Icon(
+                    Icons.lock_outline,
+                    size: 20,
+                    color: isDark ? Colors.black : Colors.white,
+                  ),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscureText ? Icons.visibility_off : Icons.visibility,
                       size: 20,
+                      color: isDark ? Colors.black : Colors.white,
                     ),
                     onPressed: () =>
                         setState(() => _obscureText = !_obscureText),
