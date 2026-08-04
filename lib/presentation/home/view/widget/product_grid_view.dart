@@ -13,23 +13,18 @@ class ProductGridView extends ConsumerWidget {
     final publicProductState = ref.watch(publicProducts);
     final categoryProductState = ref.watch(getProductsProvider);
 
-    final bool isCategoryFiltered =
-        categoryProductState.categoryProducts != null;
 
-    final bool isLoading = isCategoryFiltered
-        ? categoryProductState.isLoading
-        : publicProductState.isLoading;
+    final productList = categoryProductState.searchData != null
+        ? (categoryProductState.searchData?.data ?? []) 
+        : (categoryProductState.categoryProducts != null
+            ? (categoryProductState.categoryProducts?.products?.data ?? [])
+            : (publicProductState.data?.data?.data ?? []));
 
-    final String? errorMessage = isCategoryFiltered
-        ? categoryProductState.errorMessage
-        : publicProductState.errorMessage;
-
-    final productList = isCategoryFiltered
-        ? (categoryProductState.categoryProducts?.products?.data ?? [])
-        : (publicProductState.data?.data?.data ?? []);
+    final bool isLoading = categoryProductState.isLoading || publicProductState.isLoading;
+    final String? errorMessage = categoryProductState.errorMessage ?? publicProductState.errorMessage;
 
     if (isLoading) {
-      return SizedBox(
+      return const SizedBox(
         height: 250,
         child: Center(child: LoadingShimmerColumn()),
       );
@@ -44,7 +39,7 @@ class ProductGridView extends ConsumerWidget {
     if (productList.isEmpty) {
       return const SizedBox(
         height: 150,
-        child: Center(child: Text("No products found in this category")),
+        child: Center(child: Text("No products found")),
       );
     }
 
@@ -60,6 +55,7 @@ class ProductGridView extends ConsumerWidget {
       ),
       itemCount: productList.length,
       itemBuilder: (context, index) {
+        
         return ProductCard(product: productList[index]);
       },
     );

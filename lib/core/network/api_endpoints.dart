@@ -23,6 +23,7 @@ class ApiEndpoints {
    static const String orderDetails = 'api/orders/user/details';
    static const String profile = 'api/profile';
    static const String getCategories = 'api/public/get-categories';
+   static const String searchSuggest = 'api/search/suggestions';
 
    static String updateCartQuantity(String reg, int productId, int variantId) =>
        'api/cart/qty-update/$reg/$productId/$variantId';
@@ -34,6 +35,7 @@ class ApiEndpoints {
        'api/orders/confirm/$routeReg';
    static String categoryProducts(int id,) =>
        'api/public/category-products/$id';
+  static String search(String query, int page) => 'api/search?q=$query&page=$page';
 
   
 }
